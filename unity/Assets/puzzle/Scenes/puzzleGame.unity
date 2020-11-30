@@ -439,11 +439,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: puzzelMenu
+      value: puzzleMenu
       objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: 1115d4335193dd643963c561dd1f1b1d, type: 2}
       propertyPath: m_Text
       value: back
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1845164711}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadScene
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1115d4335193dd643963c561dd1f1b1d, type: 2}
@@ -458,6 +466,12 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 22409496, guid: 1115d4335193dd643963c561dd1f1b1d,
     type: 2}
   m_PrefabInternal: {fileID: 966867598}
+--- !u!114 &1845164711 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114000010821286550, guid: 1115d4335193dd643963c561dd1f1b1d,
+    type: 2}
+  m_PrefabInternal: {fileID: 966867598}
+  m_Script: {fileID: 11500000, guid: f48df79832aa2bb49b34d154192e59ba, type: 3}
 --- !u!1001 &2065150855
 Prefab:
   m_ObjectHideFlags: 0
