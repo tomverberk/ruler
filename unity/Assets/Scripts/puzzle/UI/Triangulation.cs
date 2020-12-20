@@ -1,19 +1,20 @@
-namespace puzzle
+namespace Puzzle
 {
     using System.Collections.Generic;
     using UnityEngine;
     using Util.Geometry;
-    using puzzle.UI.Polygon;
 
     public class Triangulation : MonoBehaviour
     {
+        public Polygon triangulatedPolygon;
         public List<Polygon> m_polygons;
 
-        public Triangulation(Polygon, IEnumerable<Polygon> polygons)
+        public Triangulation(Polygon polygon, IEnumerable<Polygon> polygons)
         {
+            triangulatedPolygon = polygon;
             foreach(var pol in polygons)
             {
-                m_polygons.AddLast(pol);
+                m_polygons.Add(pol);
             }
         }
 

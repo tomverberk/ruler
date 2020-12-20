@@ -1,10 +1,8 @@
-﻿namespace puzzle
+﻿namespace Puzzle
 {
     using System.Collections.Generic;
     using UnityEngine;
-    using Util.Geometry;
     using Util.Geometry.Polygon;
-    using puzzle.UI.polygonEdge;
 
     public class Polygon : Polygon2D
     {
@@ -21,50 +19,56 @@
         {
             foreach (var v in a_vertices)
                 AddVertex(new Vector2(v.x, v.y));
-            CalculateCenterPoint();
+            CalculateCenterPoint(a_vertices);
             initializeEdges();
+            return;
         }
 
-        private CalculateCenterPoint(a_vertices)
+        private void CalculateCenterPoint(IEnumerable<Vector2> a_vertices)
         {
             float xlow = 2147483647;
             float xhigh = -2147483648;
             float ylow = 2147483647;
             float yhigh = -2147483648;
-            for (Vector2 vertex in m_vertices)
+            foreach (var vertex in a_vertices)
             {
-               if (vertex.X < xlow)
+               if (vertex.x < xlow)
                 {
-                    xlow = vertex.X;
+                    xlow = vertex.x;
                 }
-                if (vertex.X > xhigh)
+                if (vertex.x > xhigh)
                 {
-                    xhigh = vertex.X;
+                    xhigh = vertex.x;
                 }
-                if (vertex.Y < ylow)
+                if (vertex.y < ylow)
                 {
-                    ylow = vertex.Y;
+                    ylow = vertex.y;
                 }
-                if (vertex.Y > yhigh)
+                if (vertex.y > yhigh)
                 {
-                    yhigh = vertex.Y;
+                    yhigh = vertex.y;
                 }
             }
-            self.centerPoint = new Vector2((xlow + xhigh) / 2, (ylow + yhigh) / 2);
+
+            float x = (xlow + xhigh) / 2;
+            float y = (ylow + yhigh) / 2;
+            this.centerPoint = new Vector2(x, y);
+
+            return;
         }
 
-        private initializeEdges()
+        private void initializeEdges()
         {
             return;
             //TODO
         }
 
-        public getCenterPoint()
+        public Vector2? getCenterPoint()
         {
             return this.centerPoint;
         }
 
-        public getEdges()
+        public List<PolygonEdge> getEdges()
         {
             return this.edges;
         }
