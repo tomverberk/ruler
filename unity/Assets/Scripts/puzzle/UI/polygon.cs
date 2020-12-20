@@ -20,7 +20,7 @@
             foreach (var v in a_vertices)
                 AddVertex(new Vector2(v.x, v.y));
             CalculateCenterPoint(a_vertices);
-            initializeEdges();
+            initializeEdges(a_vertices);
             return;
         }
 
@@ -57,10 +57,37 @@
             return;
         }
 
-        private void initializeEdges()
+        private void initializeEdges(IEnumerable<Vector2> a_vertices)
         {
+            Vector2 vertex1 = new Vector2(0, 0);
+            Vector2 vertex2= new Vector2(0, 0);
+            Vector2 firstVertex = new Vector2(0, 0);
+            int i = 0;
+            foreach (var vertex in a_vertices)
+            {
+                vertex2 = vertex;
+                firstVertex = vertex;
+                break;
+            }
+            foreach (var vertex in a_vertices)
+            {
+                if (i >= 1)
+                {
+                    vertex1 = vertex;
+                    edges.Add(new PolygonEdge(vertex1, vertex2));
+                    vertex2 = vertex1;
+                    i += 1;
+                } else
+                {
+                    i += 1;
+                }
+                
+            }
+            if (i > 1)
+            {
+                edges.Add(new PolygonEdge(point1: vertex2, point2: firstVertex));
+            }
             return;
-            //TODO
         }
 
         public Vector2? getCenterPoint()
