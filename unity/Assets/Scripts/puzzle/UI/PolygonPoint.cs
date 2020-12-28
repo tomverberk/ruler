@@ -3,7 +3,7 @@
     using UnityEngine;
     using Util.Geometry;
 
-    public class PolygonPoints : MonoBehaviour
+    public class PolygonPoint : MonoBehaviour
     {
 
         private PuzzleController m_gameController;

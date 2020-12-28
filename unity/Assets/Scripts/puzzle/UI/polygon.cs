@@ -100,6 +100,30 @@
             return this.edges;
         }
 
+        void Awake()
+        {
+            Pos = new Vector2();
+        }
+
+        void OnMouseDown()
+        {
+            m_gameController.m_carrying_triangle = true;
+            m_gameController.m_triangle = this;
+            // ???? this was in example code
+            //m_controller.m_line.SetPosition(0, Pos);
+        }
+
+        void OnMouseEnter()
+        {
+            if (m_gameController.m_triangle == null) return;
+
+            m_gameController.m_locked = true;
+            m_gameController.m_secondPoint = this;
+            m_gameController.m_line.SetPosition(1, Pos);
+        }
+
+
+
         // Additional methods
         // . . . 
     }
