@@ -299,8 +299,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e761e6396eac142982a8205600311c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Name: 
+  m_EditorClassIdentifier: 
   point1: {x: 100, y: 100}
   point2: {x: 0, y: 0}
+  m_gameController: {fileID: 0}
 --- !u!1 &496285548
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,7 +1090,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 112202, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_Name
-      value: Advance
+      value: Text
       objectReference: {fileID: 0}
     - target: {fileID: 135086, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_Name
