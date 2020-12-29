@@ -55,6 +55,10 @@
             // disable advance button
             m_advanceButton.Disable();
 
+
+            // enable advace button
+            m_advanceButton.Enable();
+
             m_locked = false;
         }
 
