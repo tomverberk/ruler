@@ -5,7 +5,6 @@
 
     public class PolygonPoint : MonoBehaviour
     {
-
         public Vector2 Pos { get; private set; }
 
         private PuzzleController m_gameController;

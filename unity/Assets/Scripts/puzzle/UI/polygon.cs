@@ -6,6 +6,7 @@
 
     public class Polygon : Polygon2D
     {
+        public List<PolygonPoint> points;
         public List<PolygonEdge> edges;
         public Vector2 centerPoint;
 
@@ -15,38 +16,38 @@
         public Polygon() { }
 
         // Constructor of the points
-        public Polygon(IEnumerable<Vector2> a_vertices)
+        public Polygon(List<PolygonPoint> a_vertices)
         {
-            foreach (var v in a_vertices)
-                AddVertex(new Vector2(v.x, v.y));
+            foreach (var point in a_vertices)
+                points.Add(point);
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
             return;
         }
 
-        private void CalculateCenterPoint(IEnumerable<Vector2> a_vertices)
+        private void CalculateCenterPoint(List<PolygonPoint> a_vertices)
         {
             float xlow = 2147483647;
             float xhigh = -2147483648;
             float ylow = 2147483647;
             float yhigh = -2147483648;
-            foreach (var vertex in a_vertices)
+            foreach (var point in a_vertices)
             {
-               if (vertex.x < xlow)
+               if (point.Pos.x < xlow)
                 {
-                    xlow = vertex.x;
+                    xlow = point.Pos.x;
                 }
-                if (vertex.x > xhigh)
+                if (point.Pos.x > xhigh)
                 {
-                    xhigh = vertex.x;
+                    xhigh = point.Pos.x;
                 }
-                if (vertex.y < ylow)
+                if (point.Pos.y < ylow)
                 {
-                    ylow = vertex.y;
+                    ylow = point.Pos.y;
                 }
-                if (vertex.y > yhigh)
+                if (point.Pos.y > yhigh)
                 {
-                    yhigh = vertex.y;
+                    yhigh = point.Pos.y;
                 }
             }
 
@@ -57,7 +58,7 @@
             return;
         }
 
-        private void initializeEdges(IEnumerable<Vector2> a_vertices)
+        private void initializeEdges(List<PolygonPoint> a_vertices)
         {
             Vector2 vertex1 = new Vector2(0, 0);
             Vector2 vertex2= new Vector2(0, 0);
@@ -65,15 +66,15 @@
             int i = 0;
             foreach (var vertex in a_vertices)
             {
-                vertex2 = vertex;
-                firstVertex = vertex;
+                vertex2 = vertex.Pos;
+                firstVertex = vertex.Pos;
                 break;
             }
             foreach (var vertex in a_vertices)
             {
                 if (i >= 1)
                 {
-                    vertex1 = vertex;
+                    vertex1 = vertex.Pos;
                     edges.Add(new PolygonEdge(vertex1, vertex2));
                     vertex2 = vertex1;
                     i += 1;
