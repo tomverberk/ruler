@@ -102,7 +102,7 @@
 
         void Awake()
         {
-            Pos = new Vector2();
+            centerPoint = new Vector2();
         }
 
         void OnMouseDown()
@@ -118,8 +118,8 @@
             if (m_gameController.m_triangle == null) return;
 
             m_gameController.m_locked = true;
-            m_gameController.m_secondPoint = this;
-            m_gameController.m_line.SetPosition(1, Pos);
+            //m_gameController.m_secondPoint = this;
+            //m_gameController.m_line.SetPosition(1, Pos);
         }
 
 

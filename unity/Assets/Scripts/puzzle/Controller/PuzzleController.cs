@@ -37,16 +37,16 @@
         void Start()
         {
             // get unity objects
-            //m_points = findObjectsOfType<PolygonPoint>.ToList();
+            m_points = FindObjectsOfType<PolygonPoint>().ToList();
 
             // create a polygon from the points
-            Polygon polygon = createPolygonFromPoints(m_points);
+            Polygon polygon = new Polygon(m_points);
 
             // draw the edges of the polygon
-            drawEdgesOfPolygon(m_points);
+            drawEdgesOfPolygon(polygon.edges);
 
             // TODO MAKE THIS METHOD IN OTHER FILE
-            triangulation = Puzzle.ComputeTriangulation(m_points.Select(v => v.Pos));
+            triangulation = ComputeTriangulation(polygon);
 
             // place the triangles from the triangulations in the file.
             drawTriangles(triangulation);
@@ -83,40 +83,32 @@
             }
         }
 
-        public void drawEdgesOfPolygon(List<PolygonPoint> polygon){
-            int index = 1;
+        public void drawEdgesOfPolygon(List<PolygonEdge> edges){
+            foreach (Edge edge in edges)
+            {
 
-            // TODO check this
-            int size = polygon.length();
-            
-            PolygonPoint nextPoint;
+                // draw it on the screen
+                var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
+                edge.transform.parent = this.transform;
 
-            foreach (PolygonPoint point in polygon){
-                if (index < size) {
-                    nextPoint = polygon[index];
-                } else
-                {
-                    nextPoint = polygon[0];
-                }
-                addEdge(point, nextPoint);
-                index++;
+                var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
+                roadmeshScript.CreateNewMesh(a_point1.transform.position, a_point2.transform.position);
+
             }
-        }
 
-        public void addEdge(PolygonPoint p_1, PolygonPoint p_2)
-        {
-            var edge = new PolygonEdge(p_1.Pos, p_2.Pos);
-            p_edges.Add(edge);
 
-            // draw it on the screen
-            var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
-            edge.transform.parent = this.transform;
         }
 
         public Polygon createPolygonFromPoints(List<PolygonPoint> points)
         {
-            Polygon polygon;
+            Polygon polygon = null;
             return polygon;
+        }
+
+        public List<Polygon> ComputeTriangulation(Polygon polygon)
+        {
+            List<Polygon> dummy = null;
+            return dummy;
         }
 
         public void drawTriangles(List<Polygon> triangles)
