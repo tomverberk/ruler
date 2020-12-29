@@ -7,12 +7,10 @@
     {
         public Vector2 Pos { get; private set; }
 
-        private PuzzleController m_gameController;
-
         //TODO Figure out what should be written here
-        void start()
+        void awake()
         {
-
+            Pos = new Vector2(transform.position.x, transform.position.y);
         }
     }
 }

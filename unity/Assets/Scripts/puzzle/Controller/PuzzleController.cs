@@ -2,6 +2,7 @@
 {
     using General.Menu;
     using General.Model;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
@@ -27,7 +28,7 @@
 
         private List<PolygonPoint> m_points;
         private List<Polygon> triangulation;
-        private HashSet<PolygonEdge> p_edges;
+        private List<PolygonEdge> p_edges;
         
         
         //private HashSet<LineSegment> m_segments;
@@ -43,14 +44,15 @@
             Polygon polygon = createPolygonFromPoints(m_points);
 
             // draw the edges of the polygon
-            drawEdgesOfPolygon(m_points);
+            p_edges = polygon.edges;
+            drawEdgesOfPolygon(p_edges);
 
             // TODO MAKE THIS METHOD IN OTHER FILE
             polygonLevel level = new polygonLevel(polygon);
             triangulation = level.triangulation;
 
             // place the triangles from the triangulations in the file.
-            drawTriangles(triangulation);
+            //drawTriangles(triangulation);
 
             // disable advance button
             m_advanceButton.Disable();
@@ -88,39 +90,16 @@
             }
         }
 
-        public void drawEdgesOfPolygon(List<PolygonPoint> polygon){
-            int index = 1;
-
-            // TODO check this
-            int size = polygon.Count;
-            
-            PolygonPoint nextPoint;
-
-            foreach (PolygonPoint point in polygon){
-                if (index < size) {
-                    nextPoint = polygon[index];
-                } else
-                {
-                    nextPoint = polygon[0];
-                }
-                addEdge(point, nextPoint);
-                index++;
+        public void drawEdgesOfPolygon(List<PolygonEdge> edges){
+            foreach (PolygonEdge edge in edges){
+                var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
+                drawedEdge.transform.parent = this.transform;
             }
-        }
-
-        public void addEdge(PolygonPoint p_1, PolygonPoint p_2)
-        {
-            var edge = new PolygonEdge(p_1.Pos, p_2.Pos);
-            p_edges.Add(edge);
-
-            // draw it on the screen
-            var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
-            edge.transform.parent = this.transform;
         }
 
         public Polygon createPolygonFromPoints(List<PolygonPoint> points)
         {
-            Polygon polygon = null;
+            Polygon polygon = new Polygon(points);
             return polygon;
         }
 

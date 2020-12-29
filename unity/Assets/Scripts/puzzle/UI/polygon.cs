@@ -1,13 +1,14 @@
 ﻿namespace Puzzle
 {
+    using System;
     using System.Collections.Generic;
     using UnityEngine;
     using Util.Geometry.Polygon;
 
     public class Polygon : Polygon2D
     {
-        public List<PolygonPoint> points;
-        public List<PolygonEdge> edges;
+        public List<PolygonPoint> points = new List<PolygonPoint>();
+        public List<PolygonEdge> edges = new List<PolygonEdge>();
         public Vector2 centerPoint;
 
         private PuzzleController m_gameController;
@@ -18,8 +19,10 @@
         // Constructor of the points
         public Polygon(List<PolygonPoint> a_vertices)
         {
-            foreach (var point in a_vertices)
+            foreach (PolygonPoint point in a_vertices)
+            {
                 points.Add(point);
+            }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
             return;
