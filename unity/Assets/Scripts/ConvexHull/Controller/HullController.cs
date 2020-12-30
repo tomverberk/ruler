@@ -41,6 +41,7 @@
 
         void Start()
         {
+
             // get unity objects
             m_points = new List<HullPoint>();
             m_segments = new HashSet<LineSegment>();
@@ -75,6 +76,7 @@
 
         public void InitLevel()
         {
+            print("initlevel");
             if (m_levelCounter >= m_levels.Count)
             {
                 SceneManager.LoadScene(m_victoryScene);
@@ -94,6 +96,11 @@
 
             //Make vertex list
             m_points = FindObjectsOfType<HullPoint>().ToList();
+
+            foreach (var point in m_points)
+            {
+                print("Position of the point = " + point.Pos);
+            }
 
             // compute convex hull
             m_solutionHull = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));

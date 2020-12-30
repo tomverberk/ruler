@@ -1,9 +1,19 @@
 ﻿namespace Puzzle
 {
+    //using System;
+    //using System.Collections.Generic;
+    //using UnityEngine;
+    //using Util.Geometry.Polygon;
+
+    using General.Menu;
+    using General.Model;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEngine;
     using Util.Geometry.Polygon;
+    using Util.Algorithms.Polygon;
+    using Util.Geometry;
 
     public class Polygon : Polygon2D
     {
@@ -19,6 +29,7 @@
         // Constructor of the points
         public Polygon(List<PolygonPoint> a_vertices)
         {
+
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
@@ -63,23 +74,23 @@
 
         private void initializeEdges(List<PolygonPoint> a_vertices)
         {
-            Vector2 vertex1 = new Vector2(0, 0);
-            Vector2 vertex2= new Vector2(0, 0);
-            Vector2 firstVertex = new Vector2(0, 0);
+            PolygonPoint point1 = new PolygonPoint();
+            PolygonPoint point2 = new PolygonPoint();
+            PolygonPoint firstPoint = new PolygonPoint();
             int i = 0;
             foreach (var vertex in a_vertices)
             {
-                vertex2 = vertex.Pos;
-                firstVertex = vertex.Pos;
+                point2 = vertex;
+                firstPoint = vertex;
                 break;
             }
             foreach (var vertex in a_vertices)
             {
                 if (i >= 1)
                 {
-                    vertex1 = vertex.Pos;
-                    edges.Add(new PolygonEdge(vertex1, vertex2));
-                    vertex2 = vertex1;
+                    point1 = vertex;
+                    edges.Add(new PolygonEdge(point1, point2));
+                    point2 = point1;
                     i += 1;
                 } else
                 {
@@ -89,7 +100,7 @@
             }
             if (i > 1)
             {
-                edges.Add(new PolygonEdge(point1: vertex2, point2: firstVertex));
+                edges.Add(new PolygonEdge(point1: point1, point2: firstPoint));
             }
             return;
         }

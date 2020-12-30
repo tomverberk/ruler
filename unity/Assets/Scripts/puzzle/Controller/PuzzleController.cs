@@ -37,14 +37,27 @@
 
         void Start()
         {
+            print("Beginning");
             // get unity objects
             m_points = FindObjectsOfType<PolygonPoint>().ToList();
+
+            foreach (PolygonPoint point in m_points)
+            {
+                print("Position of the point = " + point.Pos);
+            }
+                print("size of m_points");
+            print(m_points.Count);
 
             // create a polygon from the points
             Polygon polygon = createPolygonFromPoints(m_points);
 
+            print("size of edges in polygon");
+
             // draw the edges of the polygon
             p_edges = polygon.edges;
+
+            print(p_edges.Count);
+
             drawEdgesOfPolygon(p_edges);
 
             // TODO MAKE THIS METHOD IN OTHER FILE
@@ -92,8 +105,16 @@
 
         public void drawEdgesOfPolygon(List<PolygonEdge> edges){
             foreach (PolygonEdge edge in edges){
+                print("position of the edge" + edge.point1.Pos + " , " + edge.point2.Pos);
+                
                 var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
+
+                //drawedEdge.GetComponent<HullSegment>().Segment = segment;
+
+                //var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
+                //roadmeshScript.CreateNewMesh(edge.point1.transform.position, edge.point2.transform.position);
+
             }
         }
 
