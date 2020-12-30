@@ -1,25 +1,16 @@
 ﻿namespace Puzzle
 {
-    //using System;
-    //using System.Collections.Generic;
-    //using UnityEngine;
-    //using Util.Geometry.Polygon;
-
-    using General.Menu;
-    using General.Model;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using UnityEngine;
     using Util.Geometry.Polygon;
-    using Util.Algorithms.Polygon;
-    using Util.Geometry;
 
     public class Polygon : Polygon2D
     {
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
         public Vector2 centerPoint;
+        public PolygonPoint top;
+        public PolygonPoint bottom;
 
         private PuzzleController m_gameController;
 
@@ -58,10 +49,12 @@
                 if (point.Pos.y < ylow)
                 {
                     ylow = point.Pos.y;
+                    this.bottom = point;
                 }
                 if (point.Pos.y > yhigh)
                 {
                     yhigh = point.Pos.y;
+                    this.top = point;
                 }
             }
 
