@@ -5,13 +5,20 @@
 	using System.Collections.Generic;
 	using UnityEngine;
 
-	public class polygonLevel : MonoBehaviour
+    /// <summary>
+    /// Data container for puzzle level, containing point set and triangles.
+    /// </summary>
+
+    [CreateAssetMenu(fileName = "puzzleLevelNew", menuName = "Levels/Puzzle Level")]
+    public class PolygonLevel : ScriptableObject
 	{
+        [Header ("Polygon Points")]
 
 		public List<Polygon> triangulation;
+        public List<Vector2> Points = new List<Vector2>();
 		public Polygon mainPolygon;
 
-		public polygonLevel(Polygon mainPolygon)
+		public PolygonLevel(Polygon mainPolygon)
         {
 			this.mainPolygon = mainPolygon;
             this.triangulation = triangulatePolygon(mainPolygon);

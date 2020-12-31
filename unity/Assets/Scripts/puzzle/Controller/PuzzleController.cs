@@ -9,6 +9,9 @@
     using Util.Geometry.Polygon;
     using Util.Algorithms.Polygon;
     using Util.Geometry;
+    using General.Controller;
+    using UnityEngine.SceneManagement;
+
 
     public class PuzzleController : MonoBehaviour
     {
@@ -18,7 +21,15 @@
         [SerializeField]
         private GameObject m_edgeMesh;
         [SerializeField]
+        private GameObject m_pointPrefab;
+        [SerializeField]
         private ButtonContainer m_advanceButton;
+
+        [SerializeField]
+        private List<PolygonLevel> m_levels;
+        [SerializeField]
+        private string m_victoryScene;
+
 
         //internal HullPoint m_firstPoint;
         //internal HullPoint m_secondPoint;
@@ -29,40 +40,46 @@
         private List<PolygonPoint> m_points;
         private List<Polygon> triangulation;
         private List<PolygonEdge> p_edges;
-        
-        
+
+
         //private HashSet<LineSegment> m_segments;
         //private Polygon2D m_solutionHull;
+
+        private List<GameObject> instantObjects;
+
+        protected int m_levelCounter = 0;
 
 
         void Start()
         {
             print("Beginning");
             // get unity objects
-            m_points = FindObjectsOfType<PolygonPoint>().ToList();
+            m_points = new List<PolygonPoint>();
+            instantObjects = new List<GameObject>();
 
-            foreach (PolygonPoint point in m_points)
+            InitLevel();
+
+            foreach (var point in m_points)
             {
-                print("Position of the point = " + point.Pos);
+                print("position of the points" + point.Pos);
             }
-                print("size of m_points");
-            print(m_points.Count);
 
             // create a polygon from the points
             Polygon polygon = createPolygonFromPoints(m_points);
 
-            print("size of edges in polygon");
+            
 
             // draw the edges of the polygon
             p_edges = polygon.edges;
+            print("size of edges in polygon" + p_edges.Count);
 
             print(p_edges.Count);
 
             drawEdgesOfPolygon(p_edges);
 
             // TODO MAKE THIS METHOD IN OTHER FILE
-            polygonLevel level = new polygonLevel(polygon);
-            triangulation = level.triangulation;
+            //PolygonLevel level = new PolygonLevel(polygon);
+            //triangulation = level.triangulation;
 
             // place the triangles from the triangulations in the file.
             //drawTriangles(triangulation);
@@ -75,6 +92,46 @@
             m_advanceButton.Enable();
 
             m_locked = false;
+        }
+
+        public void InitLevel()
+        {
+            if (m_levelCounter >= m_levels.Count)
+            {
+                SceneManager.LoadScene(m_victoryScene);
+                return;
+            }
+
+            // clear old level
+            Clear();
+
+            // initialize settlements
+            foreach (var point in m_levels[m_levelCounter].Points)
+            {
+                var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
+                obj.transform.parent = this.transform;
+                instantObjects.Add(obj);
+                print("position of the points" + point);
+            }
+
+            //Make vertex list
+            m_points = FindObjectsOfType<PolygonPoint>().ToList();
+
+            foreach (var point in m_points)
+            {
+                print("position of the points" + point.Pos);
+            }
+
+            // m_solutionHull = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
+
+            m_advanceButton.Disable();
+        }
+
+        public void AdvanceLevel()
+        {
+            // increase level index
+            m_levelCounter++;
+            InitLevel();
         }
 
 
@@ -109,6 +166,7 @@
                 
                 var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
+                instantObjects.Add(drawedEdge);
 
                 //drawedEdge.GetComponent<HullSegment>().Segment = segment;
 
@@ -172,5 +230,25 @@
             // also check reverse
             return true;
         }
+
+        /// <summary>
+        /// Clears hull and relevant game objects
+        /// </summary>
+        private void Clear()
+        {
+            //m_points.Clear();
+            //triangulation.Clear();
+            //p_edges.Clear();
+            //m_triangle = null;
+
+            // destroy game objects created in level
+            foreach (var obj in instantObjects)
+            {
+                // destroy immediate
+                // since controller will search for existing objects afterwards
+                DestroyImmediate(obj);
+            }
+        }
+
     }
 }
