@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   repeatDistance: 5
-  widthmodifier: 0.3
+  widthmodifier: 0.1
 --- !u!114 &114658213385906032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,5 +120,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e761e6396eac142982a8205600311c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  point1: {x: 0, y: 0}
-  point2: {x: 0, y: 0}
+  point1: {fileID: 0}
+  point2: {fileID: 0}

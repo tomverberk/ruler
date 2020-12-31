@@ -53,91 +53,16 @@
         void Start()
         {
             print("Beginning");
+
             // get unity objects
             m_points = new List<PolygonPoint>();
             instantObjects = new List<GameObject>();
 
             InitLevel();
-
-            PolygonPoint a = new PolygonPoint(new Vector2(0,0));
-            PolygonPoint b = new PolygonPoint(new Vector2(0, 0));
-
-            int i = 0;
-            foreach (var point in m_points)
-            {
-                if(i == 0)
-                {
-                    a = point;
-                } else if (i == 1)
-                {
-                    b = point;
-                }
-                i++;
-                print("position of the points" + point.Pos);
-
-            }
-            print("ik ben een random punt" + a.Pos);
-            print("ik ben een ander random punt" + b.Pos);
-
-            PolygonEdge test = new PolygonEdge(a, b);
-            print("ik zou niet null moeten zijn " + test.point1.Pos);
             
 
-            // The points are not null
-
-            // create a polygon from the points
-            Polygon polygon = createPolygonFromPoints(m_points);
-
-            // The edges are somehow null
-
-            // draw the edges of the polygon
-            p_edges = polygon.edges;
-            print("size of edges in polygon" + p_edges.Count);
-            foreach(var edge in p_edges)
-            {
-                print("ik denk dat ik null ben" + edge);
-            }
-
-            drawEdgesOfPolygon(p_edges);
-
-            // TODO MAKE THIS METHOD IN OTHER FILE
-            //PolygonLevel level = new PolygonLevel(polygon);
-            //triangulation = level.triangulation;
-
-            // place the triangles from the triangulations in the file.
-            //drawTriangles(triangulation);
-
-            // disable advance button
-            m_advanceButton.Disable();
-
-
-            // enable advace button
-            m_advanceButton.Enable();
 
             m_locked = false;
-        }
-
-        public void drawEdge(PolygonPoint point1, PolygonPoint point2)
-        {
-            // ----Begin Random Stuff---- ///
-            var segment = new LineSegment(point1.Pos, point2.Pos);
-            // ----------- //
-            // -----Begin Random stuff------ //
-
-
-            var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
-            drawedEdge.transform.parent = transform;
-            instantObjects.Add(drawedEdge);
-
-            //drawedEdge.GetComponent<HullSegment>().Segment = segment;
-            drawedEdge.GetComponent<PolygonEdge>().Segment = segment;
-
-            var edgemeshScript = drawedEdge.GetComponent<ReshapingMesh>();
-
-            print(point1.transform.position);
-
-            edgemeshScript.CreateNewMesh(point1.transform.position, point2.transform.position);
-            // --------- ///
         }
 
 
@@ -159,28 +84,22 @@
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                //print("position of the points" + point);
-                //m_points.Add(new PolygonPoint(point));
             }
 
             m_points = FindObjectsOfType<PolygonPoint>().ToList();
 
-            foreach (var point in m_points)
-            {
-                print("position of the points" + point.Pos);
-            }
+            // create a polygon from the points
+            Polygon polygon = createPolygonFromPoints(m_points);
 
-            //Make vertex list
-            //m_points = FindObjectsOfType<PolygonPoint>().ToList();
-            print(m_points.Count);
-            foreach (var point in m_points)
-            {
-                print("position of the points" + point.Pos);
-            }
+            p_edges = polygon.edges;
 
-            // m_solutionHull = ConvexHull.ComputeConvexHull(m_points.Select(v => v.Pos));
+            drawEdgesOfPolygon(p_edges);
 
+
+            // disable advance button
             m_advanceButton.Disable();
+            m_advanceButton.Enable();
+
         }
 
         public void AdvanceLevel()
@@ -219,9 +138,6 @@
         public void drawEdgesOfPolygon(List<PolygonEdge> edges){
             foreach (PolygonEdge edge in edges){
 
-                print("lal ik ben lekker null" + edge);
-                
-
                 var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward , Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
                 instantObjects.Add(drawedEdge);
@@ -242,7 +158,7 @@
             {
                 print("in createPolygonPoints" + point.Pos);
             }
-            Polygon polygon = new Polygon(points, this);
+            Polygon polygon = new Polygon(points);
             return polygon;
         }
 

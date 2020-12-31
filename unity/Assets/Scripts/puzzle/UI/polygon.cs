@@ -19,9 +19,8 @@
         public Polygon() { }
 
         // Constructor of the points
-        public Polygon(List<PolygonPoint> a_vertices, PuzzleController controller)
+        public Polygon(List<PolygonPoint> a_vertices)
         {
-            m_gameController = controller;
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
@@ -84,8 +83,6 @@
                 {
                     point1 = vertex;
                     PolygonEdge edge = new PolygonEdge(point1, point2);
-
-                    m_gameController.drawEdge(point1, point2);
                     
                     edges.Add(edge);
 

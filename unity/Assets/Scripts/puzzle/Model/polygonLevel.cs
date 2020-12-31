@@ -151,7 +151,7 @@
                             trianglePoints.Add(pointIndex2);
                             pointIndex1 = (PolygonPoint)S.Pop();
                             trianglePoints.Add(pointIndex1);
-                            //triangles.Add(new Polygon(trianglePoints));
+                            triangles.Add(new Polygon(trianglePoints));
                             pointIndex2 = pointIndex1;
                         }
                         S.Push(penultamatePoint);
@@ -182,7 +182,7 @@
                                 trianglePoints.Add(pointIndex2);
                                 pointIndex1 = (PolygonPoint)S.Pop();
                                 trianglePoints.Add(pointIndex1);
-                                //triangles.Add(new Polygon(trianglePoints));
+                                triangles.Add(new Polygon(trianglePoints));
                                 pointIndex2 = pointIndex1;
                             }
                             S.Push(penultamatePoint);

@@ -234,13 +234,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_line: {fileID: 1957750538}
-  m_edgeMesh: {fileID: 6416671931283358534, guid: 10929e3a1fa1c3744a9ddf7b6ed885ea,
+  m_edgeMeshPrefab: {fileID: 6416671931283358534, guid: 10929e3a1fa1c3744a9ddf7b6ed885ea,
     type: 3}
   m_pointPrefab: {fileID: 2808750082801046721, guid: 26bdf5ae7b0b6094aa3c010b5d3adbdc,
     type: 3}
   m_advanceButton: {fileID: 276096230}
   m_levels:
   - {fileID: 11400000, guid: 5760b1c15f7c4504285a21dce9ee9647, type: 2}
+  - {fileID: 11400000, guid: eefaa3cb91b261b40aa1a59571ef58f2, type: 2}
   m_victoryScene: puzzleVictory
 --- !u!1 &276096228
 GameObject:
@@ -660,6 +661,23 @@ PrefabInstance:
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
       value: puzzleVictory
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 102900000, guid: 589cbeb5fe0a3954d89533ee208e0351,
+        type: 3}
+    - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11426352, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_Text
