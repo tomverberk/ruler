@@ -17,7 +17,7 @@
         {
             this.point1 = p1;
             this.point2 = p2;
-            Segment = new LineSegment(point1.Pos, point2.Pos);
+            this.Segment = new LineSegment(point1.Pos, point2.Pos);
         }
 
         // Additional methods

@@ -19,7 +19,7 @@
         public LineRenderer m_line;
 
         [SerializeField]
-        private GameObject m_edgeMesh;
+        public GameObject m_edgeMeshPrefab;
         [SerializeField]
         private GameObject m_pointPrefab;
         [SerializeField]
@@ -59,13 +59,28 @@
 
             InitLevel();
 
+            PolygonPoint a = new PolygonPoint(new Vector2(0,0));
+            PolygonPoint b = new PolygonPoint(new Vector2(0, 0));
+
+            int i = 0;
             foreach (var point in m_points)
             {
+                if(i == 0)
+                {
+                    a = point;
+                } else if (i == 1)
+                {
+                    b = point;
+                }
+                i++;
                 print("position of the points" + point.Pos);
-            }
 
-            PolygonEdge test = new PolygonEdge(m_points[0], m_points[1]);
-            print("ik zou niet null moeten zijn " + test);
+            }
+            print("ik ben een random punt" + a.Pos);
+            print("ik ben een ander random punt" + b.Pos);
+
+            PolygonEdge test = new PolygonEdge(a, b);
+            print("ik zou niet null moeten zijn " + test.point1.Pos);
             
 
             // The points are not null
@@ -102,6 +117,30 @@
             m_locked = false;
         }
 
+        public void drawEdge(PolygonPoint point1, PolygonPoint point2)
+        {
+            // ----Begin Random Stuff---- ///
+            var segment = new LineSegment(point1.Pos, point2.Pos);
+            // ----------- //
+            // -----Begin Random stuff------ //
+
+
+            var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            drawedEdge.transform.parent = transform;
+            instantObjects.Add(drawedEdge);
+
+            //drawedEdge.GetComponent<HullSegment>().Segment = segment;
+            drawedEdge.GetComponent<PolygonEdge>().Segment = segment;
+
+            var edgemeshScript = drawedEdge.GetComponent<ReshapingMesh>();
+
+            print(point1.transform.position);
+
+            edgemeshScript.CreateNewMesh(point1.transform.position, point2.transform.position);
+            // --------- ///
+        }
+
+
         public void InitLevel()
         {
             if (m_levelCounter >= m_levels.Count)
@@ -120,10 +159,11 @@
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                print("position of the points" + point);
-                m_points.Add(new PolygonPoint(point));
-
+                //print("position of the points" + point);
+                //m_points.Add(new PolygonPoint(point));
             }
+
+            m_points = FindObjectsOfType<PolygonPoint>().ToList();
 
             foreach (var point in m_points)
             {
@@ -182,7 +222,7 @@
                 print("lal ik ben lekker null" + edge);
                 
 
-                var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward , Quaternion.identity) as GameObject;
+                var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward , Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
                 instantObjects.Add(drawedEdge);
 
@@ -190,8 +230,7 @@
                 drawedEdge.GetComponent<PolygonEdge>().Segment = edge.Segment;
 
                 var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
-                print("ik ben edge.point1" + edge.point1);
-                print("ik ben point 1 " + edge);
+           
 
                 roadmeshScript.CreateNewMesh(edge.point1.transform.position, edge.point2.transform.position);
             }
@@ -199,7 +238,11 @@
 
         public Polygon createPolygonFromPoints(List<PolygonPoint> points)
         {
-            Polygon polygon = new Polygon(points);
+            foreach (var point in points)
+            {
+                print("in createPolygonPoints" + point.Pos);
+            }
+            Polygon polygon = new Polygon(points, this);
             return polygon;
         }
 
