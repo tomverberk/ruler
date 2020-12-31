@@ -5,6 +5,7 @@
 
     public class PolygonEdge : MonoBehaviour
     {
+        public LineSegment Segment { get; set; }
         public PolygonPoint point1;
         public PolygonPoint point2;
         //public Points points;
@@ -12,10 +13,11 @@
         private PuzzleController m_gameController;
 
         
-        public PolygonEdge (PolygonPoint point1, PolygonPoint point2)
+        public PolygonEdge (PolygonPoint p1, PolygonPoint p2)
         {
-            this.point1 = point1;
-            this.point2 = point2;
+            this.point1 = p1;
+            this.point2 = p2;
+            Segment = new LineSegment(point1.Pos, point2.Pos);
         }
 
         // Additional methods

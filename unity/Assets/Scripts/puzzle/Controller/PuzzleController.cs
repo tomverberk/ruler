@@ -64,16 +64,24 @@
                 print("position of the points" + point.Pos);
             }
 
+            PolygonEdge test = new PolygonEdge(m_points[0], m_points[1]);
+            print("ik zou niet null moeten zijn " + test);
+            
+
+            // The points are not null
+
             // create a polygon from the points
             Polygon polygon = createPolygonFromPoints(m_points);
 
-            
+            // The edges are somehow null
 
             // draw the edges of the polygon
             p_edges = polygon.edges;
             print("size of edges in polygon" + p_edges.Count);
-
-            print(p_edges.Count);
+            foreach(var edge in p_edges)
+            {
+                print("ik denk dat ik null ben" + edge);
+            }
 
             drawEdgesOfPolygon(p_edges);
 
@@ -105,6 +113,7 @@
             // clear old level
             Clear();
 
+            PolygonPoint polygonPoint;
             // initialize settlements
             foreach (var point in m_levels[m_levelCounter].Points)
             {
@@ -112,11 +121,18 @@
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
                 print("position of the points" + point);
+                m_points.Add(new PolygonPoint(point));
+
+            }
+
+            foreach (var point in m_points)
+            {
+                print("position of the points" + point.Pos);
             }
 
             //Make vertex list
-            m_points = FindObjectsOfType<PolygonPoint>().ToList();
-
+            //m_points = FindObjectsOfType<PolygonPoint>().ToList();
+            print(m_points.Count);
             foreach (var point in m_points)
             {
                 print("position of the points" + point.Pos);
@@ -162,17 +178,22 @@
 
         public void drawEdgesOfPolygon(List<PolygonEdge> edges){
             foreach (PolygonEdge edge in edges){
-                print("position of the edge" + edge.point1.Pos + " , " + edge.point2.Pos);
+
+                print("lal ik ben lekker null" + edge);
                 
-                var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward, Quaternion.identity) as GameObject;
+
+                var drawedEdge = Instantiate(m_edgeMesh, Vector3.forward , Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
                 instantObjects.Add(drawedEdge);
 
                 //drawedEdge.GetComponent<HullSegment>().Segment = segment;
+                drawedEdge.GetComponent<PolygonEdge>().Segment = edge.Segment;
 
-                //var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
-                //roadmeshScript.CreateNewMesh(edge.point1.transform.position, edge.point2.transform.position);
+                var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
+                print("ik ben edge.point1" + edge.point1);
+                print("ik ben point 1 " + edge);
 
+                roadmeshScript.CreateNewMesh(edge.point1.transform.position, edge.point2.transform.position);
             }
         }
 

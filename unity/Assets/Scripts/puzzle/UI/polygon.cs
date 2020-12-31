@@ -67,22 +67,23 @@
 
         private void initializeEdges(List<PolygonPoint> a_vertices)
         {
-            PolygonPoint point1 = new PolygonPoint();
-            PolygonPoint point2 = new PolygonPoint();
-            PolygonPoint firstPoint = new PolygonPoint();
+            PolygonPoint point1 = new PolygonPoint(new Vector2(0, 0));
+            PolygonPoint point2 = new PolygonPoint(new Vector2(0, 0));
+            PolygonPoint firstPoint = new PolygonPoint(new Vector2(0,0));
             int i = 0;
-            foreach (var vertex in a_vertices)
+            foreach (PolygonPoint vertex in a_vertices)
             {
                 point2 = vertex;
                 firstPoint = vertex;
                 break;
             }
-            foreach (var vertex in a_vertices)
+            foreach (PolygonPoint vertex in a_vertices)
             {
                 if (i >= 1)
                 {
                     point1 = vertex;
-                    edges.Add(new PolygonEdge(point1, point2));
+                    PolygonEdge edge = new PolygonEdge(point1, point2);
+                    edges.Add(edge);
                     point2 = point1;
                     i += 1;
                 } else
@@ -93,7 +94,8 @@
             }
             if (i > 1)
             {
-                edges.Add(new PolygonEdge(point1: point1, point2: firstPoint));
+                PolygonEdge edge = new PolygonEdge(point1, firstPoint);
+                edges.Add(edge);
             }
             return;
         }

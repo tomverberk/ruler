@@ -7,6 +7,10 @@
     {
         public Vector2 Pos { get; private set; }
 
+        public PolygonPoint(Vector2 pos)
+        {
+            this.Pos = pos;
+        }
         //TODO Figure out what should be written here
         void awake()
         {
