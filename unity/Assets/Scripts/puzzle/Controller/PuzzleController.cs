@@ -77,7 +77,6 @@
             // clear old level
             Clear();
 
-            PolygonPoint polygonPoint;
             // initialize settlements
             foreach (var point in m_levels[m_levelCounter].Points)
             {
