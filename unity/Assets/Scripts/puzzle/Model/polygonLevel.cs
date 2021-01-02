@@ -1,10 +1,10 @@
-﻿namespace Puzzle
-{
-    using System;
-    using System.Collections;
-	using System.Collections.Generic;
-	using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
+namespace Puzzle
+{
     /// <summary>
     /// Data container for puzzle level, containing point set and triangles.
     /// </summary>
@@ -156,15 +156,31 @@
                         }
                         S.Push(penultamatePoint);
                         S.Push(leftList[i]);
+                        side = false;
                     }
                     // Same boundaries
                     else
                     {
-                        // TODO
+                        PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
+                        PolygonPoint pointIndex1;
+                        PolygonPoint pointIndex2;
+                        pointIndex2 = penultamatePoint;
+                        while (PointCanSeePoint(leftList[i], pointIndex2, (PolygonPoint)S.Peek(), false))
+                        {
+                            pointIndex1 = (PolygonPoint)S.Pop();
+                            List<PolygonPoint> trianglePoints = null;
+                            trianglePoints.Add(leftList[i]);
+                            trianglePoints.Add(pointIndex2);
+                            trianglePoints.Add(pointIndex1);
+                            triangles.Add(new Polygon(trianglePoints));
+                            pointIndex2 = pointIndex1;
+                        }
+                        S.Push(pointIndex2);
+                        S.Push(leftList[i]);
                     }
                     i++;
                 } 
-                else if (leftList[i].Pos.y < rightList[j].Pos.y)
+                else if (leftList[i].Pos.y < rightList[j].Pos.y) // Point lies on right side
                 {
                     // Not same side
                     if (!side)
@@ -187,12 +203,28 @@
                             }
                             S.Push(penultamatePoint);
                             S.Push(rightList[j]);
+                            side = true;
                         }
                     }
                     // Same boundaries
                     else
                     {
-                        // TODO same boundaries
+                        PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
+                        PolygonPoint pointIndex1;
+                        PolygonPoint pointIndex2;
+                        pointIndex2 = penultamatePoint;
+                        while (PointCanSeePoint(rightList[j], pointIndex2, (PolygonPoint)S.Peek(), true))
+                        {
+                            pointIndex1 = (PolygonPoint)S.Pop();
+                            List<PolygonPoint> trianglePoints = null;
+                            trianglePoints.Add(rightList[j]);
+                            trianglePoints.Add(pointIndex2);
+                            trianglePoints.Add(pointIndex1);
+                            triangles.Add(new Polygon(trianglePoints));
+                            pointIndex2 = pointIndex1;
+                        }
+                        S.Push(pointIndex2);
+                        S.Push(rightList[j]);
                     }
                     j++;
                 }
@@ -200,6 +232,36 @@
 
 
             return triangles;
+        }
+
+        // A is highest point, B lowest point, query point should lie on the inside of the line.
+        private bool PointCanSeePoint(PolygonPoint linePointA, PolygonPoint queryPoint, PolygonPoint linePointB, Boolean side)
+        {
+            float position;
+            position = Math.Sign((linePointB.Pos.x - linePointA.Pos.x) * (queryPoint.Pos.y - linePointA.Pos.y) - (linePointB.Pos.y - linePointA.Pos.y) * (queryPoint.Pos.x - linePointA.Pos.x));
+            // Right
+            if (side)
+            {
+                if (position == -1)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            } 
+            // Left
+            else if (!side)
+            {
+                if (position == 1)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+            return false;
         }
 
         private void getLeftRightSidePoints(Polygon pol, ref PolygonPoint pointLeft, ref PolygonPoint pointRight, PolygonEdge dummy1, PolygonEdge dummy2)
