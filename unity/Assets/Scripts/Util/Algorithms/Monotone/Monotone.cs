@@ -25,26 +25,37 @@
       IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
 
       // C# List has O(1) index access, no problem for running time.
-      PolygonEdge prev = input.edges[input.points.Count - 1];
-
-      foreach (PolygonEdge next in input.edges)
+      EdgeStructure first = new EdgeStructure
       {
-        if (prev.point2 != next.point1)
+        edge = input.edges[input.points.Count - 1],
+      };
+      EdgeStructure prev = first;
+
+      foreach (PolygonEdge nextEdge in input.edges)
+      {
+        if (prev.edge.point2 != nextEdge.point1)
         {
           throw new ArgumentException("Edges are not in correct CCW order");
         }
 
-        VertexType type = DetermineType(prev.point1, next.point1, next.point2);
-        events.Push(new VertexStructure
+        EdgeStructure next;
+        if (nextEdge == first.edge.point1)
         {
-          previous = new EdgeStructure
-          {
-            edge = prev,
-          },
+          next = first;
+        }
+        else
+        {
           next = new EdgeStructure
           {
-            edge = next,
-          },
+            edge = nextEdge,
+          };
+        }
+
+        VertexType type = DetermineType(prev.edge.point1, next.edge.point1, next.edge.point2);
+        events.Push(new VertexStructure
+        {
+          previous = prev,
+          next = next,
           type = type
         });
 
