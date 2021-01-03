@@ -2,6 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Diagnostics;
   using UnityEngine;
   using Util.DataStructures.BST;
   using Util.DataStructures.Queue;
@@ -20,6 +21,7 @@
       {
         throw new ArgumentException("Needs at least three points in input polynomail.");
       }
+      List<Polygon> result = new List<Polygon>();
 
       // Initialze the event queue with all points.
       IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
@@ -52,12 +54,15 @@
         }
 
         VertexType type = DetermineType(prev.edge.point1, next.edge.point1, next.edge.point2);
-        events.Push(new VertexStructure
+        VertexStructure v = new VertexStructure
         {
           previous = prev,
           next = next,
           type = type
-        });
+        };
+        events.Push(v);
+        prev.vertex2 = v;
+        next.vertex1 = v;
 
         prev = next;
       }
@@ -65,14 +70,19 @@
       // Initialize the status structure as an empty BST;
       IBST<EdgeStructure> status = new AATree<EdgeStructure>();
 
+      VertexStructure last = null, oneButLast = null;
+
       // Continue while there are remaining events
       while (events.Count > 0)
       {
         VertexStructure v = events.Pop();
-        HandleVertex(status, v);
+        HandleVertex(status, result, v);
+        oneButLast = last;
+        last = v;
       }
+      result.Add(InsertDiagonal(last, oneButLast));
 
-      return null;
+      return result;
     }
 
     private VertexType DetermineType(PolygonPoint prev, PolygonPoint curr, PolygonPoint next)
@@ -131,7 +141,22 @@
       return c;
     }
 
-    private void HandleVertex(IBST<EdgeStructure> status, VertexStructure v)
+    private Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
+    {
+      Trace.WriteLine(String.Format("Inserting diagonal from {0} to {1}", first, last));
+      List<PolygonPoint> vertices = new List<PolygonPoint>();
+
+      VertexStructure current = first;
+      while (current != last)
+      {
+        vertices.Add(current.vertex);
+        current = current.next.vertex2;
+      }
+
+      return new Polygon(vertices);
+    }
+
+    private void HandleVertex(IBST<EdgeStructure> status, List<Polygon> result, VertexStructure v)
     {
       EdgeStructure e;
       switch (v.type)
@@ -151,7 +176,7 @@
 
             if (upper.helper.type == VertexType.MERGE)
             {
-              // TODO: insert diagonal
+              result.Add(InsertDiagonal(upper.helper, v));
             }
             status.Delete(upper);
 
@@ -163,7 +188,7 @@
             e = GetLeft(status, v);
             if (e.helper.type == VertexType.MERGE)
             {
-              // TODO: insert diagonal
+              result.Add(InsertDiagonal(e.helper, v));
             }
             e.helper = v;
           }
@@ -179,7 +204,7 @@
 
           if (e.helper.type == VertexType.MERGE)
           {
-            // TODO: insert diagonal
+            result.Add(InsertDiagonal(e.helper, v));
           }
 
           status.Delete(e);
@@ -188,7 +213,7 @@
         case VertexType.SPLIT:
           e = GetLeft(status, v);
 
-          // TODO: insert diagonal
+          result.Add(InsertDiagonal(e.helper, v));
 
           e.helper = v;
           status.Insert(v.next);
@@ -199,14 +224,14 @@
           e = GetRight(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            // TODO: insert diagonal
+            result.Add(InsertDiagonal(e.helper, v));
           }
           status.Delete(e);
 
           e = GetLeft(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            // TODO: insert diagonal
+            result.Add(InsertDiagonal(e.helper, v));
           }
           e.helper = v;
 

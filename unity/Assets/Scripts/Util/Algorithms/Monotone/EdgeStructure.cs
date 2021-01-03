@@ -12,7 +12,12 @@
   class EdgeStructure : IComparable<EdgeStructure>, IEquatable<EdgeStructure>
   {
     public PolygonEdge edge;
+
     public VertexStructure helper;
+
+    public VertexStructure vertex1;
+
+    public VertexStructure vertex2;
 
     public int CompareTo(EdgeStructure other)
     {
