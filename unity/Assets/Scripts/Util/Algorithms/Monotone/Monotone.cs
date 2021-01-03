@@ -8,14 +8,14 @@
   using Util.DataStructures.Queue;
   using Puzzle;
 
-  public partial class Monotone : MonoBehaviour
+  public static class Monotone
   {
     /// <summary>
     /// Given a simple Polygon with vertices in CCW order, and edges connecting them in CCW order
     /// with point1 before point2 in the CCW order, compute y-monotone polygons
     /// covering the input polygon.
     /// </summary>
-    public List<Polygon> MakeMonotone(Polygon input)
+    public static List<Polygon> MakeMonotone(Polygon input)
     {
       if (input.points.Count < 3)
       {
@@ -85,7 +85,7 @@
       return result;
     }
 
-    private VertexType DetermineType(PolygonPoint prev, PolygonPoint curr, PolygonPoint next)
+    private static VertexType DetermineType(PolygonPoint prev, PolygonPoint curr, PolygonPoint next)
     {
       // Compute delta vectors for the vertices.
       Vector2 d1 = curr.Pos - prev.Pos;
@@ -123,7 +123,7 @@
       }
     }
 
-    private EdgeStructure GetLeft(IBST<EdgeStructure> status, VertexStructure v)
+    private static EdgeStructure GetLeft(IBST<EdgeStructure> status, VertexStructure v)
     {
       EdgeStructure c;
 
@@ -132,7 +132,7 @@
       return c;
     }
 
-    private EdgeStructure GetRight(IBST<EdgeStructure> status, VertexStructure v)
+    private static EdgeStructure GetRight(IBST<EdgeStructure> status, VertexStructure v)
     {
       EdgeStructure c;
 
@@ -141,7 +141,7 @@
       return c;
     }
 
-    private Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
+    private static Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
     {
       Trace.WriteLine(String.Format("Inserting diagonal from {0} to {1}", first, last));
       List<PolygonPoint> vertices = new List<PolygonPoint>();
@@ -156,7 +156,7 @@
       return new Polygon(vertices);
     }
 
-    private void HandleVertex(IBST<EdgeStructure> status, List<Polygon> result, VertexStructure v)
+    private static void HandleVertex(IBST<EdgeStructure> status, List<Polygon> result, VertexStructure v)
     {
       EdgeStructure e;
       switch (v.type)
