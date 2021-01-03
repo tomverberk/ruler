@@ -37,8 +37,14 @@
         VertexType type = DetermineType(prev.point1, next.point1, next.point2);
         events.Push(new VertexStructure
         {
-          previous = prev,
-          next = next,
+          previous = new IntersectingComponent
+          {
+            edge = prev,
+          },
+          next = new IntersectingComponent
+          {
+            edge = next,
+          },
           type = type
         });
 
@@ -101,10 +107,7 @@
       IntersectingComponent c;
 
       // Get Left edge of vertex.
-      status.FindNextSmallest(new IntersectingComponent
-      {
-        edge = v.next
-      }, out c);
+      status.FindNextSmallest(v.next, out c);
       return c;
     }
 
@@ -113,10 +116,7 @@
       IntersectingComponent c;
 
       // Get Right edge of vertex.
-      status.FindNextBiggest(new IntersectingComponent
-      {
-        edge = v.next
-      }, out c);
+      status.FindNextBiggest(v.next, out c);
       return c;
     }
 
@@ -127,24 +127,21 @@
       {
         case VertexType.REGULAR:
           // Check if Polygon lies locally right:
-          if (v.previous.point1.Pos.x > v.vertex.Pos.x && v.next.point2.Pos.x > v.vertex.Pos.x)
+          if (v.previous.edge.point1.Pos.x > v.vertex.Pos.x && v.next.edge.point2.Pos.x > v.vertex.Pos.x)
           {
-            PolygonEdge upper = v.previous;
-            PolygonEdge lower = v.next;
-            if (upper.point1.Pos.y < lower.point2.Pos.y)
+            IntersectingComponent upper = v.previous;
+            IntersectingComponent lower = v.next;
+            if (upper.edge.point1.Pos.y < lower.edge.point2.Pos.y)
             {
-              PolygonEdge temp = upper;
+              IntersectingComponent temp = upper;
               upper = lower;
               lower = temp;
             }
 
             // TODO: implement 'upper -> IntersectingComponent' mapping and handling
 
-            status.Insert(new IntersectingComponent
-            {
-              edge = lower,
-              helper = v,
-            });
+            status.Insert(lower);
+            lower.helper = v;
           }
           else
           {
@@ -158,11 +155,8 @@
           return;
 
         case VertexType.START:
-          status.Insert(new IntersectingComponent
-          {
-            edge = v.next,
-            helper = v,
-          });
+          status.Insert(v.next);
+          v.next.helper = v;
           return;
 
         case VertexType.END:
@@ -182,11 +176,8 @@
           // TODO: insert diagonal
 
           e.helper = v;
-          status.Insert(new IntersectingComponent
-          {
-            edge = v.next,
-            helper = v,
-          });
+          status.Insert(v.next);
+          v.next.helper = v;
           return;
 
         case VertexType.MERGE:

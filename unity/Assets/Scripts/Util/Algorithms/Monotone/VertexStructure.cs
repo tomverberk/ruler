@@ -6,14 +6,12 @@
   {
     public PolygonPoint vertex
     {
-      get { return next.point1; }
+      get { return next.edge.point1; }
     }
 
-    public PolygonEdge previous;
-    public PolygonEdge next;
+    public IntersectingComponent previous;
+    public IntersectingComponent next;
 
     public VertexType type;
-
-    public IntersectingComponent left;
   }
 }
