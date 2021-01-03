@@ -9,17 +9,17 @@
   /// status structure. Comparison is implemented based on the x-coordinate of the
   /// x coordinate of one of the points.
   /// </summary>
-  class IntersectingComponent : IComparable<IntersectingComponent>, IEquatable<IntersectingComponent>
+  class EdgeStructure : IComparable<EdgeStructure>, IEquatable<EdgeStructure>
   {
     public PolygonEdge edge;
     public VertexStructure helper;
 
-    public int CompareTo(IntersectingComponent other)
+    public int CompareTo(EdgeStructure other)
     {
       return Comparer<float>.Default.Compare(edge.point1.Pos.x, other.edge.point1.Pos.x);
     }
 
-    public bool Equals(IntersectingComponent other)
+    public bool Equals(EdgeStructure other)
     {
       return edge.Equals(other.edge) && helper.Equals(other.helper);
     }

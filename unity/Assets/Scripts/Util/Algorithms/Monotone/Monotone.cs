@@ -37,11 +37,11 @@
         VertexType type = DetermineType(prev.point1, next.point1, next.point2);
         events.Push(new VertexStructure
         {
-          previous = new IntersectingComponent
+          previous = new EdgeStructure
           {
             edge = prev,
           },
-          next = new IntersectingComponent
+          next = new EdgeStructure
           {
             edge = next,
           },
@@ -52,7 +52,7 @@
       }
 
       // Initialize the status structure as an empty BST;
-      IBST<IntersectingComponent> status = new AATree<IntersectingComponent>();
+      IBST<EdgeStructure> status = new AATree<EdgeStructure>();
 
       // Continue while there are remaining events
       while (events.Count > 0)
@@ -102,38 +102,38 @@
       }
     }
 
-    private IntersectingComponent GetLeft(IBST<IntersectingComponent> status, VertexStructure v)
+    private EdgeStructure GetLeft(IBST<EdgeStructure> status, VertexStructure v)
     {
-      IntersectingComponent c;
+      EdgeStructure c;
 
       // Get Left edge of vertex.
       status.FindNextSmallest(v.next, out c);
       return c;
     }
 
-    private IntersectingComponent GetRight(IBST<IntersectingComponent> status, VertexStructure v)
+    private EdgeStructure GetRight(IBST<EdgeStructure> status, VertexStructure v)
     {
-      IntersectingComponent c;
+      EdgeStructure c;
 
       // Get Right edge of vertex.
       status.FindNextBiggest(v.next, out c);
       return c;
     }
 
-    private void HandleVertex(IBST<IntersectingComponent> status, VertexStructure v)
+    private void HandleVertex(IBST<EdgeStructure> status, VertexStructure v)
     {
-      IntersectingComponent e;
+      EdgeStructure e;
       switch (v.type)
       {
         case VertexType.REGULAR:
           // Check if Polygon lies locally right:
           if (v.previous.edge.point1.Pos.x > v.vertex.Pos.x && v.next.edge.point2.Pos.x > v.vertex.Pos.x)
           {
-            IntersectingComponent upper = v.previous;
-            IntersectingComponent lower = v.next;
+            EdgeStructure upper = v.previous;
+            EdgeStructure lower = v.next;
             if (upper.edge.point1.Pos.y < lower.edge.point2.Pos.y)
             {
-              IntersectingComponent temp = upper;
+              EdgeStructure temp = upper;
               upper = lower;
               lower = temp;
             }

@@ -9,8 +9,8 @@
       get { return next.edge.point1; }
     }
 
-    public IntersectingComponent previous;
-    public IntersectingComponent next;
+    public EdgeStructure previous;
+    public EdgeStructure next;
 
     public VertexType type;
   }
