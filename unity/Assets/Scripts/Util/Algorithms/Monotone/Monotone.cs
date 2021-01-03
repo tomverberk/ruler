@@ -157,6 +157,8 @@
       first.next = new EdgeStructure
       {
         edge = new PolygonEdge(first.vertex, last.vertex),
+        vertex1 = first,
+        vertex2 = last,
       };
       last.previous = first.next;
 
