@@ -149,7 +149,11 @@
               lower = temp;
             }
 
-            // TODO: implement 'upper -> IntersectingComponent' mapping and handling
+            if (upper.helper.type == VertexType.MERGE)
+            {
+              // TODO: insert diagonal
+            }
+            status.Delete(upper);
 
             status.Insert(lower);
             lower.helper = v;
