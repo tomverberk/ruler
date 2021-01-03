@@ -126,7 +126,35 @@
       switch (v.type)
       {
         case VertexType.REGULAR:
-          // TODO: implement.
+          // Check if Polygon lies locally right:
+          if (v.previous.point1.Pos.x > v.vertex.Pos.x && v.next.point2.Pos.x > v.vertex.Pos.x)
+          {
+            PolygonEdge upper = v.previous;
+            PolygonEdge lower = v.next;
+            if (upper.point1.Pos.y < lower.point2.Pos.y)
+            {
+              PolygonEdge temp = upper;
+              upper = lower;
+              lower = temp;
+            }
+
+            // TODO: implement 'upper -> IntersectingComponent' mapping and handling
+
+            status.Insert(new IntersectingComponent
+            {
+              edge = lower,
+              helper = v,
+            });
+          }
+          else
+          {
+            e = GetLeft(status, v);
+            if (e.helper.type == VertexType.MERGE)
+            {
+              // TODO: insert diagonal
+            }
+            e.helper = v;
+          }
           return;
 
         case VertexType.START:
