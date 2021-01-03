@@ -39,7 +39,7 @@
         }
 
         EdgeStructure next;
-        if (nextEdge == first.edge.point1)
+        if (nextEdge == first.edge)
         {
           next = first;
         }
