@@ -5,14 +5,14 @@
   using Puzzle;
 
   /// <summary>
-  /// Data structure for storing thet iontersecting components of the MakeMonotone
+  /// Data structure for storing thet intersecting components of the MakeMonotone
   /// status structure. Comparison is implemented based on the x-coordinate of the
   /// x coordinate of one of the points.
   /// </summary>
   class IntersectingComponent : IComparable<IntersectingComponent>, IEquatable<IntersectingComponent>
   {
     public PolygonEdge edge;
-    public PolygonPoint helper;
+    public VertexStructure helper;
 
     public int CompareTo(IntersectingComponent other)
     {

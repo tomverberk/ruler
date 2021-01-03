@@ -9,6 +9,11 @@
 
   public partial class Monotone : MonoBehaviour
   {
+    /// <summary>
+    /// Given a Polygon with vertices in CCW order, and edges connecting them in CCW order
+    /// with point1 before point2 in the CCW order, compute y-monotone polygons
+    /// covering the input polygon.
+    /// </summary>
     public List<Polygon> MakeMonotone(Polygon input)
     {
       if (input.points.Count < 3)
@@ -20,20 +25,24 @@
       IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
 
       // C# List has O(1) index access, no problem for running time.
-      PolygonPoint prev = input.points[input.points.Count - 2];
-      PolygonPoint curr = input.points[input.points.Count - 1];
+      PolygonEdge prev = input.edges[input.points.Count - 1];
 
-      foreach (PolygonPoint next in input.points)
+      foreach (PolygonEdge next in input.edges)
       {
-        VertexType type = DetermineType(prev, curr, next);
+        if (prev.point2 != next.point1)
+        {
+          throw new ArgumentException("Edges are not in correct CCW order");
+        }
+
+        VertexType type = DetermineType(prev.point1, next.point1, next.point2);
         events.Push(new VertexStructure
         {
-          vertex = curr,
+          previous = prev,
+          next = next,
           type = type
         });
 
-        prev = curr;
-        curr = next;
+        prev = next;
       }
 
       // Initialize the status structure as an empty BST;
@@ -64,7 +73,7 @@
       if (d1.y > 0)
       {
         // Start or split vertex.
-        if (d1.x > 0)
+        if (d1.x < 0)
         {
           return VertexType.START;
         }
@@ -76,7 +85,7 @@
       else
       {
         // End or merge vertex.
-        if (d1.x > 0)
+        if (d1.x < 0)
         {
           return VertexType.MERGE;
         }
@@ -87,9 +96,31 @@
       }
     }
 
-    private void HandleVertex(IBST<IntersectingComponent> status, VertexStructure p)
+    private void HandleVertex(IBST<IntersectingComponent> status, VertexStructure v)
     {
-
+      switch (v.type)
+      {
+        case VertexType.REGULAR:
+          // TODO: implement.
+          return;
+        case VertexType.START:
+          // TODO: implement.
+          IntersectingComponent c = new IntersectingComponent
+          {
+            edge = null,
+            helper = v,
+          };
+          return;
+        case VertexType.END:
+          // TODO: implement.
+          return;
+        case VertexType.SPLIT:
+          // TODO: implement.
+          return;
+        case VertexType.MERGE:
+          // TODO: implement.
+          return;
+      }
     }
   }
 }

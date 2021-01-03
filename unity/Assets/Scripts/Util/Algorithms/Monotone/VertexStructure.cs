@@ -2,9 +2,18 @@
 {
   using Puzzle;
 
-  public class VertexStructure
+  class VertexStructure
   {
-    public PolygonPoint vertex;
+    public PolygonPoint vertex
+    {
+      get { return next.point1; }
+    }
+
+    public PolygonEdge previous;
+    public PolygonEdge next;
+
     public VertexType type;
+
+    public IntersectingComponent left;
   }
 }
