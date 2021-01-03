@@ -10,7 +10,7 @@
   public partial class Monotone : MonoBehaviour
   {
     /// <summary>
-    /// Given a Polygon with vertices in CCW order, and edges connecting them in CCW order
+    /// Given a simple Polygon with vertices in CCW order, and edges connecting them in CCW order
     /// with point1 before point2 in the CCW order, compute y-monotone polygons
     /// covering the input polygon.
     /// </summary>
@@ -96,29 +96,86 @@
       }
     }
 
+    private IntersectingComponent GetLeft(IBST<IntersectingComponent> status, VertexStructure v)
+    {
+      IntersectingComponent c;
+
+      // Get Left edge of vertex.
+      status.FindNextSmallest(new IntersectingComponent
+      {
+        edge = v.next
+      }, out c);
+      return c;
+    }
+
+    private IntersectingComponent GetRight(IBST<IntersectingComponent> status, VertexStructure v)
+    {
+      IntersectingComponent c;
+
+      // Get Right edge of vertex.
+      status.FindNextBiggest(new IntersectingComponent
+      {
+        edge = v.next
+      }, out c);
+      return c;
+    }
+
     private void HandleVertex(IBST<IntersectingComponent> status, VertexStructure v)
     {
+      IntersectingComponent e;
       switch (v.type)
       {
         case VertexType.REGULAR:
           // TODO: implement.
           return;
+
         case VertexType.START:
-          // TODO: implement.
-          IntersectingComponent c = new IntersectingComponent
+          status.Insert(new IntersectingComponent
           {
-            edge = null,
+            edge = v.next,
             helper = v,
-          };
+          });
           return;
+
         case VertexType.END:
-          // TODO: implement.
+          e = GetLeft(status, v);
+
+          if (e.helper.type == VertexType.MERGE)
+          {
+            // TODO: insert diagonal
+          }
+
+          status.Delete(e);
           return;
+
         case VertexType.SPLIT:
-          // TODO: implement.
+          e = GetLeft(status, v);
+
+          // TODO: insert diagonal
+
+          e.helper = v;
+          status.Insert(new IntersectingComponent
+          {
+            edge = v.next,
+            helper = v,
+          });
           return;
+
         case VertexType.MERGE:
-          // TODO: implement.
+          e = GetRight(status, v);
+          if (e.helper.type == VertexType.MERGE)
+          {
+            // TODO: insert diagonal
+          }
+          status.Delete(e);
+
+          e = GetLeft(status, v);
+          if (e.helper.type == VertexType.MERGE)
+          {
+            // TODO: insert diagonal
+          }
+          e.helper = v;
+
           return;
       }
     }
