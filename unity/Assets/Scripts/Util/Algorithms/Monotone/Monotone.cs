@@ -153,6 +153,13 @@
         current = current.next.vertex2;
       }
 
+      // Update polynomial for next traversals.
+      first.next = new EdgeStructure
+      {
+        edge = new PolygonEdge(first.vertex, last.vertex),
+      };
+      last.previous = first.next;
+
       return new Polygon(vertices);
     }
 
