@@ -1,8 +1,7 @@
-﻿namespace Util.Monotone
+namespace Util.Monotone
 {
   using System;
   using System.Collections.Generic;
-  using System.Diagnostics;
   using UnityEngine;
   using Util.DataStructures.BST;
   using Util.DataStructures.Queue;
@@ -29,7 +28,7 @@
       // C# List has O(1) index access, no problem for running time.
       EdgeStructure first = new EdgeStructure
       {
-        edge = input.edges[input.points.Count - 1],
+        edge = input.edges[input.edges.Count - 1],
       };
       EdgeStructure prev = first;
 
@@ -70,17 +69,16 @@
       // Initialize the status structure as an empty BST;
       IBST<EdgeStructure> status = new AATree<EdgeStructure>();
 
-      VertexStructure last = null, oneButLast = null;
+      VertexStructure last = null;
 
       // Continue while there are remaining events
       while (events.Count > 0)
       {
         VertexStructure v = events.Pop();
         HandleVertex(status, result, v);
-        oneButLast = last;
         last = v;
       }
-      result.Add(InsertDiagonal(last, oneButLast));
+      result.Add(InsertDiagonal(last.next.vertex2, last));
 
       return result;
     }
@@ -143,7 +141,7 @@
 
     private static Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
     {
-      Trace.WriteLine(String.Format("Inserting diagonal from {0} to {1}", first, last));
+      Debug.Log(String.Format("DIAGONAL ({0}, {1}) to ({2}, {3})", first.vertex.Pos.x, first.vertex.Pos.y, last.vertex.Pos.x, last.vertex.Pos.y));
       List<PolygonPoint> vertices = new List<PolygonPoint>();
 
       VertexStructure current = first;
@@ -152,6 +150,7 @@
         vertices.Add(current.vertex);
         current = current.next.vertex2;
       }
+      vertices.Add(last.vertex);
 
       // Update polynomial for next traversals.
       first.next = new EdgeStructure
@@ -171,21 +170,15 @@
       switch (v.type)
       {
         case VertexType.REGULAR:
-          // Check if Polygon lies locally right:
-          if (v.previous.edge.point1.Pos.x > v.vertex.Pos.x && v.next.edge.point2.Pos.x > v.vertex.Pos.x)
+          // Check if Polygon lies locally right based on CCW property:
+          if (v.previous.edge.point1.Pos.y > v.next.edge.point2.Pos.y)
           {
             EdgeStructure upper = v.previous;
             EdgeStructure lower = v.next;
-            if (upper.edge.point1.Pos.y < lower.edge.point2.Pos.y)
-            {
-              EdgeStructure temp = upper;
-              upper = lower;
-              lower = temp;
-            }
 
             if (upper.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(upper.helper, v));
+              result.Add(InsertDiagonal(v, upper.helper));
             }
             status.Delete(upper);
 
@@ -197,7 +190,7 @@
             e = GetLeft(status, v);
             if (e.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(e.helper, v));
+              result.Add(InsertDiagonal(v, e.helper));
             }
             e.helper = v;
           }
@@ -213,7 +206,7 @@
 
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(e.helper, v));
+            result.Add(InsertDiagonal(v, e.helper));
           }
 
           status.Delete(e);
@@ -222,7 +215,7 @@
         case VertexType.SPLIT:
           e = GetLeft(status, v);
 
-          result.Add(InsertDiagonal(e.helper, v));
+          result.Add(InsertDiagonal(v, e.helper));
 
           e.helper = v;
           status.Insert(v.next);
@@ -233,14 +226,14 @@
           e = GetRight(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(e.helper, v));
+            result.Add(InsertDiagonal(v, e.helper));
           }
           status.Delete(e);
 
           e = GetLeft(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(e.helper, v));
+            result.Add(InsertDiagonal(v, e.helper));
           }
           e.helper = v;
 

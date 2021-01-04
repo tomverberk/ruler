@@ -12,7 +12,7 @@
 
     public int Compare(VertexStructure p1, VertexStructure p2)
     {
-      return Comparer<float>.Default.Compare(p1.vertex.Pos.y, p2.vertex.Pos.y);
+      return -Comparer<float>.Default.Compare(p1.vertex.Pos.y, p2.vertex.Pos.y);
     }
   }
 }
