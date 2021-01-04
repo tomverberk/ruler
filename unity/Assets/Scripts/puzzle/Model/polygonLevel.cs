@@ -266,7 +266,7 @@ namespace Puzzle
 
         private void getLeftRightSidePoints(Polygon pol, ref PolygonPoint pointLeft, ref PolygonPoint pointRight, PolygonEdge dummy1, PolygonEdge dummy2)
         {
-            if (dummy1.point1 == pol.top && dummy2.point2 == pol.top)
+            if (dummy1.point1.Pos == pol.top.Pos && dummy2.point2.Pos == pol.top.Pos)
             {
                 if (dummy1.point1.Pos.x <= dummy2.point2.Pos.x)
                 {
@@ -279,7 +279,7 @@ namespace Puzzle
                     pointRight = dummy1.point1;
                 }
             }
-            else if (dummy1.point1 == pol.top && dummy2.point1 == pol.top)
+            else if (dummy1.point1.Pos == pol.top.Pos && dummy2.point1.Pos == pol.top.Pos)
             {
                 if (dummy1.point1.Pos.x <= dummy2.point1.Pos.x)
                 {
@@ -292,7 +292,7 @@ namespace Puzzle
                     pointRight = dummy1.point1;
                 }
             }
-            else if (dummy1.point2 == pol.top && dummy2.point1 == pol.top)
+            else if (dummy1.point2.Pos == pol.top.Pos && dummy2.point1.Pos == pol.top.Pos)
             {
                 if (dummy1.point2.Pos.x <= dummy2.point1.Pos.x)
                 {
@@ -305,7 +305,7 @@ namespace Puzzle
                     pointRight = dummy1.point2;
                 }
             }
-            else if (dummy1.point2 == pol.top && dummy2.point2 == pol.top)
+            else if (dummy1.point2.Pos == pol.top.Pos && dummy2.point2.Pos == pol.top.Pos)
             {
                 if (dummy1.point2.Pos.x <= dummy2.point2.Pos.x)
                 {
