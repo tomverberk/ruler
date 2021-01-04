@@ -7,28 +7,30 @@
   using Util.DataStructures.Queue;
   using Puzzle;
 
+  class VertexStructure
+  {
+    public PolygonPoint point;
+    public bool isLeft;
+  }
+
   public static class Triangulate
   {
     public static List<Polygon> TriangulatePoly(Polygon pol)
     {
       List<Polygon> triangles = new List<Polygon>();
-      List<PolygonPoint> leftList = new List<PolygonPoint>();
-      List<PolygonPoint> rightList = new List<PolygonPoint>();
+
+      // Initialze the event queue with all points.
+      IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
 
       PolygonPoint bottom = pol.points[0];
       PolygonPoint prev = pol.points[pol.points.Count - 1];
       foreach (PolygonPoint curr in pol.points)
       {
-        if (prev.Pos.y > curr.Pos.y)
+        events.Push(new VertexStructure
         {
-          // We are on the left side
-          leftList.Add(curr);
-        }
-        else
-        {
-          // We are on the right side
-          rightList.Add(curr);
-        }
+          point = curr,
+          isLeft = (prev.Pos.y > curr.Pos.y),
+        });
 
         prev = curr;
         if (curr.Pos.y < bottom.Pos.y)
@@ -36,140 +38,71 @@
           bottom = curr;
         }
       }
-      rightList.Add(bottom);
-
-      leftList.Sort(YComparer.Instance);
-      rightList.Sort(YComparer.Instance);
 
       // BEGIN ALGORITHM
-      int leftSize = leftList.Count;
-      int rightSize = rightList.Count;
-      Stack S = new Stack();
-      S.Push(pol.top);
-      Boolean side = false; // False = left, True is right
-      int i = 0; // left index
-      int j = 0; // right index
-      if (leftList[0].Pos.y >= rightList[0].Pos.y)
-      {
-        S.Push(leftList[0]);
-        i++;
-        side = false;
-      }
-      else if (leftList[0].Pos.y < rightList[0].Pos.y)
-      {
-        S.Push(rightList[0]);
-        j++;
-        side = true;
-      }
+      Stack<VertexStructure> s = new Stack<VertexStructure>();
+      s.Push(events.Pop());
+      VertexStructure ujMinusOne = events.Pop();
+      s.Push(ujMinusOne);
 
-      while (i < leftSize - 1 || j < rightSize - 1)
+      while (events.Count > 1)
       {
-        if (leftList[i].Pos.y >= rightList[j].Pos.y)
+        VertexStructure uj = events.Pop();
+        if (uj.isLeft != s.Peek().isLeft)
         {
-          // Not same side
-          if (side)
+          // Different side
+          while (s.Count > 0)
           {
-            PolygonPoint pointIndex1;
-            PolygonPoint pointIndex2;
-            PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
-            pointIndex2 = penultamatePoint;
-            while (S.Count > 0)
+            VertexStructure v = s.Pop();
+            if (s.Count > 0)
             {
-              List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
-              trianglePoints.Add(leftList[i]);
-              trianglePoints.Add(pointIndex2);
-              pointIndex1 = (PolygonPoint)S.Pop();
-              trianglePoints.Add(pointIndex1);
-              triangles.Add(new Polygon(trianglePoints));
-              pointIndex2 = pointIndex1;
+              List<PolygonPoint> points = new List<PolygonPoint>();
+              points.Add(uj.point);
+              points.Add(ujMinusOne.point);
+              points.Add(v.point);
+              triangles.Add(new Polygon(points));
             }
-            S.Push(penultamatePoint);
-            S.Push(leftList[i]);
-            side = false;
           }
-          // Same boundaries
-          else
-          {
-            PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
-            PolygonPoint pointIndex1;
-            PolygonPoint pointIndex2;
-            pointIndex2 = penultamatePoint;
-            while (S.Count > 0 && PointCanSeePoint(leftList[i], pointIndex2, (PolygonPoint)S.Peek(), false))
-            {
-              pointIndex1 = (PolygonPoint)S.Pop();
-              List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
-              trianglePoints.Add(leftList[i]);
-              trianglePoints.Add(pointIndex2);
-              trianglePoints.Add(pointIndex1);
-              triangles.Add(new Polygon(trianglePoints));
-              pointIndex2 = pointIndex1;
-            }
-            S.Push(pointIndex2);
-            S.Push(leftList[i]);
-          }
-          i++;
+          s.Push(ujMinusOne);
+          s.Push(uj);
         }
-        else if (leftList[i].Pos.y < rightList[j].Pos.y) // Point lies on right side
+        else
         {
-          // Not same side
-          if (!side)
+          // Same side
+          VertexStructure v = s.Pop();
+          while (s.Count > 0 && PointCanSeePoint(uj.point, v.point, s.Peek().point, v.isLeft))
           {
-            PolygonPoint pointIndex1;
-            PolygonPoint pointIndex2;
-            PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
-            pointIndex2 = penultamatePoint;
-            while (S.Count > 0)
-            {
-              List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
-              trianglePoints.Add(rightList[j]);
-              trianglePoints.Add(pointIndex2);
-              pointIndex1 = (PolygonPoint)S.Pop();
-              trianglePoints.Add(pointIndex1);
-              triangles.Add(new Polygon(trianglePoints));
-              pointIndex2 = pointIndex1;
-            }
-            S.Push(penultamatePoint);
-            S.Push(rightList[j]);
-            side = true;
+            VertexStructure vPrime = s.Pop();
+
+            List<PolygonPoint> points = new List<PolygonPoint>();
+            points.Add(uj.point);
+            points.Add(vPrime.point);
+            points.Add(v.point);
+            triangles.Add(new Polygon(points));
+
+            v = vPrime;
           }
-          // Same boundaries
-          else
-          {
-            PolygonPoint penultamatePoint = (PolygonPoint)S.Pop();
-            PolygonPoint pointIndex1;
-            PolygonPoint pointIndex2;
-            pointIndex2 = penultamatePoint;
-            while (S.Count > 0 && PointCanSeePoint(rightList[j], pointIndex2, (PolygonPoint)S.Peek(), true))
-            {
-              pointIndex1 = (PolygonPoint)S.Pop();
-              List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
-              trianglePoints.Add(rightList[j]);
-              trianglePoints.Add(pointIndex2);
-              trianglePoints.Add(pointIndex1);
-              triangles.Add(new Polygon(trianglePoints));
-              pointIndex2 = pointIndex1;
-            }
-            S.Push(pointIndex2);
-            S.Push(rightList[j]);
-          }
-          j++;
+          s.Push(v);
+          s.Push(uj);
         }
+
+        ujMinusOne = uj;
       }
 
-            PolygonPoint pointIndexx = (PolygonPoint)S.Pop();
-            while (S.Count > 0)
-         {
-                List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
-                
-                PolygonPoint pointIndex2= (PolygonPoint)S.Pop();
-                trianglePoints.Add(pointIndexx);
-                trianglePoints.Add(pointIndex2);
-                trianglePoints.Add(bottom);
-                triangles.Add(new Polygon(trianglePoints));
-                pointIndexx = pointIndex2;
+      VertexStructure un = events.Pop();
+      VertexStructure v1 = s.Pop();
+      while (s.Count > 0)
+      {
+        VertexStructure v2 = s.Pop();
 
-         }
+        List<PolygonPoint> points = new List<PolygonPoint>();
+        points.Add(un.point);
+        points.Add(v1.point);
+        points.Add(v2.point);
+        triangles.Add(new Polygon(points));
 
+        v1 = v2;
+      }
       // END ALGORITHM
 
 

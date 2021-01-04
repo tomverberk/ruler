@@ -76,6 +76,7 @@
                 print(String.Format("Monotone Polygon ({0}):", p.points.Count));
 
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
+                print(String.Format("Triangles: {0}", triangles.Count));
                 foreach (Polygon t in triangles)
                 {
                     print(String.Format("Triangle ({0})", t.points.Count));
