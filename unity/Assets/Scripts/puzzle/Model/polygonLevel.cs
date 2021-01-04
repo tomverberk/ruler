@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Util.Monotone;
 
 namespace Puzzle
 {
@@ -28,7 +29,7 @@ namespace Puzzle
         {
             List<Polygon> triangulation = null;
             List<Polygon> subTriangulation;
-            List<Polygon> subPolygons = MakeMonotone(mainPolygon);
+            List<Polygon> subPolygons = Monotone.MakeMonotone(mainPolygon);
             foreach (Polygon pol in subPolygons)
             {
                 subTriangulation = Triangulate(pol);
@@ -41,30 +42,11 @@ namespace Puzzle
             return triangulation;
         }
 
-        private List<Polygon> MakeMonotone(Polygon mainPolygon)
-        {
-            List<Polygon> monotonePolygons = null;
-            if (isMonotone(mainPolygon))
-            {
-                monotonePolygons.Add(mainPolygon);
-            } else
-            {
-                // Do something
-                monotonePolygons.Add(mainPolygon);
-            }
-            return monotonePolygons;
-        }
-
-        private bool isMonotone(Polygon mainPolygon)
-        {
-            return true;
-        }
-
         private List<Polygon> Triangulate(Polygon pol)
         {
             List<Polygon> triangles = null;
-            List<PolygonPoint> leftList = null;
-            List<PolygonPoint> rightList = null;
+            List<PolygonPoint> leftList = new List<PolygonPoint>();
+            List<PolygonPoint> rightList = new List<PolygonPoint>();
 
             List<PolygonEdge> edges = pol.getEdges();
             PolygonPoint pointLeft = null;
