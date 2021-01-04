@@ -36,31 +36,16 @@
       {
         if (prev.edge.point2.Pos != nextEdge.point1.Pos)
         {
-          Debug.Log("INVALID:");
-          Debug.Log(String.Format("({0}, {1}) to ({2}, {3})", prev.edge.point2.Pos.x, prev.edge.point2.Pos.y, nextEdge.point1.Pos.x, nextEdge.point1.Pos.y));
-          PolygonEdge e = nextEdge;
-          Debug.Log(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
-          e = prev.edge;
-          Debug.Log(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
           throw new ArgumentException("Edges are not in correct CCW order");
         }
         else if (prev.edge.point1.Pos == nextEdge.point2.Pos)
         {
           throw new ArgumentException("Loop detected.");
         }
-        else
-        {
-          // Debug.Log("Correct");
-        }
 
         EdgeStructure next;
         if (nextEdge.point1.Pos == first.edge.point1.Pos && nextEdge.point2.Pos == first.edge.point2.Pos)
         {
-          // Debug.Log(String.Format("Equals: "));
-          // PolygonEdge e = nextEdge;
-          // Debug.Log(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
-          // e = first.edge;
-          // Debug.Log(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
           next = first;
         }
         else
@@ -78,7 +63,6 @@
           next = next,
           type = type
         };
-        // Debug.Log(String.Format("Definition ({0}, {1}) {2}", v.vertex.Pos.x, v.vertex.Pos.y, v.type));
         events.Push(v);
         prev.vertex2 = v;
         next.vertex1 = v;
@@ -95,7 +79,6 @@
       while (events.Count > 0)
       {
         VertexStructure v = events.Pop();
-        Debug.Log(String.Format("Event ({0}, {1})", v.vertex.Pos.x, v.vertex.Pos.y));
         HandleVertex(status, result, v);
         last = v;
       }
@@ -106,14 +89,8 @@
 
     private static VertexType DetermineType(PolygonPoint prev, PolygonPoint curr, PolygonPoint next)
     {
-      // Debug.Log(String.Format("prev ({0}, {1})", prev.Pos.x, prev.Pos.y));
-      // Debug.Log(String.Format("curr ({0}, {1})", curr.Pos.x, curr.Pos.y));
-      // Debug.Log(String.Format("next ({0}, {1})", next.Pos.x, next.Pos.y));
-      // Compute delta vectors for the vertices.
       Vector2 d1 = curr.Pos - prev.Pos;
-      // Debug.Log(String.Format("D1 ({0}, {1})", d1.x, d1.y));
       Vector2 d2 = next.Pos - curr.Pos;
-      // Debug.Log(String.Format("D2 ({0}, {1})", d2.x, d2.y));
 
       if (d1.y * d2.y >= 0)
       {
@@ -167,7 +144,6 @@
 
     private static Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
     {
-      Debug.Log(String.Format("DIAGONAL ({0}, {1}) to ({2}, {3})", first.vertex.Pos.x, first.vertex.Pos.y, last.vertex.Pos.x, last.vertex.Pos.y));
       List<PolygonPoint> vertices = new List<PolygonPoint>();
 
       VertexStructure current = first;
