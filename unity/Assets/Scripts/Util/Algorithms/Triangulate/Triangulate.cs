@@ -63,7 +63,7 @@
       }
 
       int iter = 0;
-      while (i < leftSize && j < rightSize)
+      while (i < leftSize - 1 || j < rightSize - 1)
       {
         iter++;
         if (iter > pol.points.Count * 2)
@@ -162,6 +162,21 @@
           j++;
         }
       }
+
+            PolygonPoint pointIndexx = (PolygonPoint)S.Pop();
+            while (S.Count > 0)
+         {
+                List<PolygonPoint> trianglePoints = new List<PolygonPoint>();
+                
+                PolygonPoint pointIndex2= (PolygonPoint)S.Pop();
+                trianglePoints.Add(pointIndexx);
+                trianglePoints.Add(pointIndex2);
+                trianglePoints.Add(bottom);
+                triangles.Add(new Polygon(trianglePoints));
+                pointIndexx = pointIndex2;
+
+         }
+
       // END ALGORITHM
 
 
