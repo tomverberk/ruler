@@ -90,22 +90,22 @@ namespace Puzzle
                 // dummy 1 is left edge, dummy2 is right edge
                 getLeftRightPoints(pointLeft, pointRight, edges, ref dummy1, ref dummy2);
 
-                if (dummy1.point1 == pointLeft && !leftBottom)
+                if (dummy1.point1.Pos == pointLeft.Pos && !leftBottom)
                 {
                     pointLeft = dummy1.point2;
                     leftList.Add(pointLeft);
                 } 
-                else if (dummy1.point2 == pointLeft && !leftBottom)
+                else if (dummy1.point2.Pos == pointLeft.Pos && !leftBottom)
                 {
                     pointLeft = dummy1.point1;
                     leftList.Add(pointLeft);
                 }
-                if (dummy2.point1 == pointRight && !rightBottom)
+                if (dummy2.point1.Pos == pointRight.Pos && !rightBottom)
                 {
                     pointRight = dummy2.point2;
                     rightList.Add(pointRight);
                 }
-                else if (dummy2.point2 == pointRight && !rightBottom)
+                else if (dummy2.point2.Pos == pointRight.Pos && !rightBottom)
                 {
                     pointRight = dummy2.point1;
                     rightList.Add(pointRight);
@@ -325,14 +325,14 @@ namespace Puzzle
             int i = 0;
             foreach (PolygonEdge edge in edges)
             {
-                if (leftTop == rightTop)
+                if (leftTop.Pos == rightTop.Pos)
                 {
-                    if ((edge.point1 == leftTop || edge.point2 == leftTop) && i == 0)
+                    if ((edge.point1.Pos == leftTop.Pos || edge.point2.Pos == leftTop.Pos) && i == 0)
                     {
                         dummy1 = edge;
                         i++;
                     }
-                    else if ((edge.point1 == leftTop || edge.point2 == leftTop) && i == 1)
+                    else if ((edge.point1.Pos == leftTop.Pos || edge.point2.Pos == leftTop.Pos) && i == 1)
                     {
                         dummy2 = edge;
                         break;
@@ -340,11 +340,11 @@ namespace Puzzle
                 }
                 else
                 {
-                    if (edge.point1 == leftTop || edge.point2 == leftTop)
+                    if (edge.point1.Pos == leftTop.Pos || edge.point2.Pos == leftTop.Pos)
                     {
                         dummy1 = edge;
                     }
-                    else if (edge.point1 == rightTop || edge.point2 == rightTop)
+                    else if (edge.point1.Pos == rightTop.Pos || edge.point2.Pos == rightTop.Pos)
                     {
                         dummy2 = edge;
                     }
