@@ -82,7 +82,7 @@
                 if (i >= 1)
                 {
                     point1 = vertex;
-                    PolygonEdge edge = new PolygonEdge(point1, point2);
+                    PolygonEdge edge = new PolygonEdge(point2, point1);
                     
                     edges.Add(edge);
 

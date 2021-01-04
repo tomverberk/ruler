@@ -9,6 +9,7 @@
     using Util.Geometry.Polygon;
     using Util.Algorithms.Polygon;
     using Util.Geometry;
+    using Util.Monotone;
     using General.Controller;
     using UnityEngine.SceneManagement;
 
@@ -53,6 +54,29 @@
         void Start()
         {
             print("Beginning");
+
+            // https://www.geogebra.org/calculator/kc4s9xds
+            List<PolygonPoint> points = new List<PolygonPoint>();
+            points.Add(new PolygonPoint(new Vector2(12.12f, 10.47f))); // A
+            points.Add(new PolygonPoint(new Vector2(9f, 9.71f))); // B
+            points.Add(new PolygonPoint(new Vector2(8.86f, 7.07f))); // C
+            points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
+            points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
+            points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
+            points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
+            points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
+            points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
+            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+            Polygon poly = new Polygon(points);
+            List<Polygon> monotone = Monotone.MakeMonotone(poly);
+            foreach (Polygon p in monotone)
+            {
+              print(String.Format("Monotone Polygon ({0}):", p.points.Count));
+              foreach (PolygonEdge e in p.edges)
+              {
+                print(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
+              }
+            }
 
             // get unity objects
             m_points = new List<PolygonPoint>();
