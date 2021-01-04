@@ -62,15 +62,8 @@
         side = true;
       }
 
-      int iter = 0;
       while (i < leftSize && j < rightSize)
       {
-        iter++;
-        if (iter > pol.points.Count * 2)
-        {
-          Debug.Log(String.Format("i={0}, j={1}", i, j));
-          throw new Exception("Should not be reached");
-        }
         if (leftList[i].Pos.y >= rightList[j].Pos.y)
         {
           // Not same side
