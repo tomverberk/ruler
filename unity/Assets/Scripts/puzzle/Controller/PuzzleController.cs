@@ -172,12 +172,12 @@
 
             
 
-            trianglePoints.drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
-            print("I don't give an error here");
+            //trianglePoints.drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
+            //print("I don't give an error here");
 
             var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
             triangleScript.Polygon = trianglePoints.polygon;
-            trianglePoints.drawedTriangle = triangleScript;
+            //trianglePoints.drawedTriangle = triangleScript;
         }
 
         public void AdvanceLevel()
@@ -208,7 +208,7 @@
                 m_triangle.SetCenterPoint(pos);
                 print(m_triangle.getCenterPoint());
 
-                m_triangle.drawedTriangle.GetComponent<Polygon>().centerPoint = m_triangle.centerPoint;
+                //m_triangle.drawedTriangle.GetComponent<Polygon>().centerPoint = m_triangle.centerPoint;
                 //forEach(var obj in instantObjects){
                 //    if(obj is Polygon)
                 //    {

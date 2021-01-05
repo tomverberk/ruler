@@ -14,7 +14,7 @@
         public PolygonPoint bottom;
         public List<Vector2> actualPoints = new List<Vector2>();
         public Polygon2D polygon;
-        public Polygon2DMesh drawedTriangle;
+        public GameObject drawedTriangle;
 
         private PuzzleController m_gameController;
 
