@@ -25,6 +25,8 @@
         [SerializeField]
         private GameObject m_pointPrefab;
         [SerializeField]
+        private GameObject m_triangleMeshPrefab;
+        [SerializeField]
         private ButtonContainer m_advanceButton;
 
         [SerializeField]
@@ -39,9 +41,11 @@
         internal bool m_locked;
         internal bool m_carrying_triangle;
 
-        private List<PolygonPoint> m_points;
+        private List<PolygonPoint> m_points = new List<PolygonPoint>();
         private List<Polygon> triangulation;
         private List<PolygonEdge> p_edges;
+
+        public Polygon2DWithHoles testPolygon { get; private set; }
 
 
         //private HashSet<LineSegment> m_segments;
@@ -54,13 +58,15 @@
 
         void Start()
         {
+
+            
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
             List<PolygonPoint> points = new List<PolygonPoint>();
-            points.Add(new PolygonPoint(new Vector2(12.12f, 10.47f))); // A
-            points.Add(new PolygonPoint(new Vector2(9f, 9.71f))); // B
-            points.Add(new PolygonPoint(new Vector2(8.86f, 7.07f))); // C
+            points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
+            points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
+            points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
             points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
             points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
             points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
@@ -88,8 +94,9 @@
             }
 
             // get unity objects
-            m_points = new List<PolygonPoint>();
             instantObjects = new List<GameObject>();
+            m_points = new List<PolygonPoint>();
+            
 
             InitLevel();
             
@@ -116,22 +123,57 @@
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
+                m_points.Add(new PolygonPoint(point));
             }
 
-            m_points = FindObjectsOfType<PolygonPoint>().ToList();
+            //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
+            Polygon testPolygon = createPolygonFromPoints(m_points);
+
+            createsmallTriangle(testPolygon);
 
             // create a polygon from the points
+            //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
+            //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
+
+            //Polygon polygon1 = createPolygonFromPoints(setPoints1);
+            //polygon polygon2 = createPolygonFromPoints(setPoints2);
+
+            //createsmallTriangle(polygon1);
+            //createsmallTriangle(polygon2);
+
             Polygon polygon = createPolygonFromPoints(m_points);
+
+
 
             p_edges = polygon.edges;
 
             drawEdgesOfPolygon(p_edges);
+
+            // add here the triangles for the polygon
+            //createsmallTriangles()
 
 
             // disable advance button
             m_advanceButton.Disable();
             m_advanceButton.Enable();
 
+        }
+
+        public void createsmallTriangle(Polygon trianglePoints)
+        {
+            var drawedTriangle = Instantiate(m_triangleMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
+            drawedTriangle.transform.parent = this.transform;
+            instantObjects.Add(drawedTriangle);
+
+            drawedTriangle.GetComponent<Polygon>().points = trianglePoints.points;
+            drawedTriangle.GetComponent<Polygon>().edges = trianglePoints.edges;
+            drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
+            drawedTriangle.GetComponent<Polygon>().top = trianglePoints.top;
+            drawedTriangle.GetComponent<Polygon>().bottom = trianglePoints.bottom;
+            drawedTriangle.GetComponent<Polygon>().actualPoints = trianglePoints.actualPoints;
+
+            var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
+            triangleScript.Polygon = trianglePoints.polygon;
         }
 
         public void AdvanceLevel()
@@ -176,20 +218,20 @@
 
                 //drawedEdge.GetComponent<HullSegment>().Segment = segment;
                 drawedEdge.GetComponent<PolygonEdge>().Segment = edge.Segment;
+                drawedEdge.GetComponent<PolygonEdge>().point1 = edge.point1;
+                drawedEdge.GetComponent<PolygonEdge>().point2 = edge.point2;
 
                 var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
-           
 
-                roadmeshScript.CreateNewMesh(edge.point1.transform.position, edge.point2.transform.position);
+                Vector2 p1 = edge.point1.Pos;
+                Vector2 p2 = edge.point2.Pos;
+
+                roadmeshScript.CreateNewMesh(p1, p2);
             }
         }
 
         public Polygon createPolygonFromPoints(List<PolygonPoint> points)
         {
-            foreach (var point in points)
-            {
-                print("in createPolygonPoints" + point.Pos);
-            }
             Polygon polygon = new Polygon(points);
             return polygon;
         }
