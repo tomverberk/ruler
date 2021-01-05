@@ -5,13 +5,15 @@
     using Util.Geometry.Polygon;
     using Util.Geometry;
 
-    public class Polygon : Polygon2D
+    public class Polygon : MonoBehaviour
     {
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
         public Vector2 centerPoint;
         public PolygonPoint top;
         public PolygonPoint bottom;
+        public List<Vector2> actualPoints = new List<Vector2>();
+        public Polygon2D polygon;
 
         private PuzzleController m_gameController;
 
@@ -24,9 +26,12 @@
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
+                actualPoints.Add(point.Pos);
+                print("position of the point = " + point.Pos);
             }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
+            polygon = new Polygon2D(actualPoints);
             return;
         }
 
@@ -127,9 +132,9 @@
 
         void OnMouseEnter()
         {
-            if (m_gameController.m_triangle == null) return;
+            //if (m_gameController.m_triangle == null) return;
 
-            m_gameController.m_locked = true;
+            //m_gameController.m_locked = true;
             //m_gameController.m_secondPoint = this;
             //m_gameController.m_line.SetPosition(1, Pos);
         }
