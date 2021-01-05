@@ -157,7 +157,7 @@
 
             p_edges = polygon.edges;
 
-            drawEdgesOfPolygon(p_edges);
+            //drawEdgesOfPolygon(p_edges);
 
             // add here the triangles for the polygon
             //createsmallTriangles()
