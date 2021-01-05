@@ -9,11 +9,12 @@
     {
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
-        public Vector2 centerPoint;
+        public Vector3 centerPoint;
         public PolygonPoint top;
         public PolygonPoint bottom;
         public List<Vector2> actualPoints = new List<Vector2>();
         public Polygon2D polygon;
+        public Polygon2DMesh drawedTriangle;
 
         private PuzzleController m_gameController;
 
@@ -23,11 +24,12 @@
         // Constructor of the points
         public Polygon(List<PolygonPoint> a_vertices)
         {
+            print(" a polygon is created ");
+
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
                 actualPoints.Add(point.Pos);
-                print("position of the point = " + point.Pos);
             }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
@@ -65,7 +67,8 @@
 
             float x = (xlow + xhigh) / 2;
             float y = (ylow + yhigh) / 2;
-            this.centerPoint = new Vector2(x, y);
+            float z = 10;
+            this.centerPoint = new Vector3(x, y, z);
 
             return;
         }
@@ -107,6 +110,11 @@
             return;
         }
 
+        public void SetCenterPoint(Vector3 pos)
+        {
+            this.centerPoint = pos;
+        }
+
         public Vector2? getCenterPoint()
         {
             return this.centerPoint;
@@ -119,7 +127,10 @@
 
         void Awake()
         {
-            centerPoint = new Vector2();
+            m_gameController = FindObjectOfType<PuzzleController>();
+            m_gameController.m_triangle = this;
+            m_gameController.m_carrying_triangle = true;
+            print(" I AM ACTIVATED");
         }
 
         void OnMouseDown()
@@ -130,9 +141,11 @@
             //m_controller.m_line.SetPosition(0, Pos);
         }
 
-        void OnMouseEnter()
+        void OnMouseUp()
         {
-            //if (m_gameController.m_triangle == null) return;
+            //m_gameController.m_carrying_triangle = false;
+            //m_gameController.m_triangle = null;
+            
 
             //m_gameController.m_locked = true;
             //m_gameController.m_secondPoint = this;
