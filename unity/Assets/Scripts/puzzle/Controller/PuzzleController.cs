@@ -10,6 +10,7 @@
     using Util.Algorithms.Polygon;
     using Util.Geometry;
     using Util.Monotone;
+    using Util.Triangulate;
     using General.Controller;
     using UnityEngine.SceneManagement;
 
@@ -75,13 +76,21 @@
             points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
             Polygon poly = new Polygon(points);
             List<Polygon> monotone = Monotone.MakeMonotone(poly);
+
             foreach (Polygon p in monotone)
             {
-              print(String.Format("Monotone Polygon ({0}):", p.points.Count));
-              foreach (PolygonEdge e in p.edges)
-              {
-                print(String.Format("({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
-              }
+                print(String.Format("Monotone Polygon ({0}):", p.points.Count));
+
+                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
+                print(String.Format("Triangles: {0}", triangles.Count));
+                foreach (Polygon t in triangles)
+                {
+                    print(String.Format("Triangle ({0})", t.points.Count));
+                    foreach (PolygonEdge e in t.edges)
+                    {
+                        print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
+                    }
+                }
             }
 
             // get unity objects
