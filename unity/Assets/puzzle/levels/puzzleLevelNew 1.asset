@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: puzzleLevelNew 1
+  m_EditorClassIdentifier: Assembly-CSharp:Puzzle:PolygonLevel
+  triangulation: []
+  Points:
+  - {x: 12.12, y: 10.47}
+  - {x: 9, y: 9.71}
+  - {x: 8.86, y: 7.07}
+  - {x: 11.08, y: 5.47}
+  - {x: 13.12, y: 6.51}
+  - {x: 14.76, y: 5.79}
+  - {x: 17.28, y: 7.19}
+  - {x: 16.86, y: 8.76}
+  - {x: 15.26, y: 11.09}
+  - {x: 13.74, y: 9.15}
+  mainPolygon: {fileID: 0}

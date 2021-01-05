@@ -89,7 +89,7 @@
         ujMinusOne = uj;
         }
 
-        VertexStructure un = events.Pop();
+       /* VertexStructure un = events.Pop();
         VertexStructure v1 = s.Pop();
         while (s.Count > 0)
         {
@@ -102,7 +102,7 @@
         triangles.Add(new Polygon(points));
 
         v1 = v2;
-        }
+        }*/
         // END ALGORITHM
 
 

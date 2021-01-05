@@ -129,8 +129,18 @@
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
             Polygon testPolygon = createPolygonFromPoints(m_points);
 
-            createsmallTriangle(testPolygon);
+            //createsmallTriangle(testPolygon);
 
+            List<Polygon> monotone = Monotone.MakeMonotone(testPolygon);
+            foreach (Polygon p in monotone)
+            {
+                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
+                foreach (Polygon t in triangles)
+                {
+                    drawEdgesOfPolygon(t.edges);
+                }
+            }
+           
             // create a polygon from the points
             //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
             //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
