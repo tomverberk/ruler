@@ -164,7 +164,6 @@
 
 
             // disable advance button
-            m_advanceButton.Disable();
             m_advanceButton.Enable();
 
         }
