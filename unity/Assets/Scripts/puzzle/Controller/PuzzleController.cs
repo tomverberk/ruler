@@ -38,7 +38,6 @@
         //internal HullPoint m_firstPoint;
         //internal HullPoint m_secondPoint;
         internal Polygon m_triangle;
-        internal bool m_locked;
         internal bool m_carrying_triangle;
 
         private List<PolygonPoint> m_points = new List<PolygonPoint>();
@@ -99,10 +98,10 @@
             
 
             InitLevel();
-            
 
 
-            m_locked = false;
+
+            m_carrying_triangle = false;
         }
 
 
@@ -200,10 +199,7 @@
             if (m_carrying_triangle && !Input.GetMouseButton(0))
             {
                 // This shouldn't happen
-                m_locked = true;
-                m_triangle = null;
-                m_carrying_triangle = false;
-                print("Button is not being pressed pressed and m_locked == True, this shouldn't happen");
+                print("Button is not being pressed pressed and we are not carrying a triangle, this shouldn't happen");
 
 
             }
@@ -220,11 +216,10 @@
             }
 
 
-            else if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
+            else if ((m_carrying_triangle && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
                 //TODO something idk
                 print("button released");
-                m_locked = false;
                 m_triangle = null;
                 m_carrying_triangle = false;
             }

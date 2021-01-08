@@ -138,7 +138,6 @@
             print("I am entering the rectangle");
             //if (m_gameController.m_triangle == null) return;
 
-            //m_gameController.m_locked = true;
             //m_gameController.m_secondPoint = this;
             //m_gameController.m_line.SetPosition(1, Pos);
         }
