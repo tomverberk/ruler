@@ -119,7 +119,9 @@
 
         void Awake()
         {
+            print("I have awoken");
             centerPoint = new Vector2();
+            m_gameController = FindObjectOfType<PuzzleController>();
         }
 
         void OnMouseDown()
