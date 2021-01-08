@@ -242,7 +242,7 @@ MonoBehaviour:
     type: 3}
   m_advanceButton: {fileID: 276096230}
   m_levels:
-  - {fileID: 11400000, guid: 196744a3d0c1b85419e92dd4fab61b99, type: 2}
+  - {fileID: 11400000, guid: 30d7c0712f87d9b4986be23def5f6136, type: 2}
   m_victoryScene: puzzleVictory
 --- !u!1 &276096228
 GameObject:

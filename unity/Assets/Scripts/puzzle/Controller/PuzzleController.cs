@@ -63,35 +63,35 @@
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
-            List<PolygonPoint> points = new List<PolygonPoint>();
-            points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
-            points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
-            points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
-            points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
-            points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
-            points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
-            points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
-            points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
-            points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
-            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
-            Polygon poly = new Polygon(points);
-            List<Polygon> monotone = Monotone.MakeMonotone(poly);
+            //List<PolygonPoint> points = new List<PolygonPoint>();
+            //points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
+            //points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
+            //points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
+            //points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
+            //points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
+            //points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
+            //points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
+            //points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
+            //points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
+            //points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+            //Polygon poly = new Polygon(points);
+            //List<Polygon> monotone = Monotone.MakeMonotone(poly);
 
-            foreach (Polygon p in monotone)
-            {
-                print(String.Format("Monotone Polygon ({0}):", p.points.Count));
+            //foreach (Polygon p in monotone)
+            //{
+            //    print(String.Format("Monotone Polygon ({0}):", p.points.Count));
 
-                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
-                print(String.Format("Triangles: {0}", triangles.Count));
-                foreach (Polygon t in triangles)
-                {
-                    print(String.Format("Triangle ({0})", t.points.Count));
-                    foreach (PolygonEdge e in t.edges)
-                    {
-                        print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
-                    }
-                }
-            }
+            //    List<Polygon> triangles = Triangulate.TriangulatePoly(p);
+            //    print(String.Format("Triangles: {0}", triangles.Count));
+            //    foreach (Polygon t in triangles)
+            //    {
+            //        print(String.Format("Triangle ({0})", t.points.Count));
+            //        foreach (PolygonEdge e in t.edges)
+            //        {
+            //            print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
+            //        }
+            //    }
+            //}
 
             // get unity objects
             instantObjects = new List<GameObject>();
@@ -197,24 +197,36 @@
         void Update()
         {
             //TODO CREATE MOUSE INTERACTION
-            if (m_locked && !Input.GetMouseButton(0))
+            if (m_carrying_triangle && !Input.GetMouseButton(0))
             {
-                // TODO Place puzzelpeace and reset values
-                m_locked = false;
+                // This shouldn't happen
+                m_locked = true;
                 m_triangle = null;
                 m_carrying_triangle = false;
+                print("Button is not being pressed pressed and m_locked == True, this shouldn't happen");
+
+
+            }
+            else if (Input.GetMouseButton(0) && m_carrying_triangle)
+            {
+                print("Button is being pressed and I am carrying a triangle");
+                //Change position of the triangle
 
             }
             else if (Input.GetMouseButton(0))
             {
-                // TODO something idk
-
+                print("Button is being pressed but not carrying triangle");
+                // Do nothing
             }
 
 
-            if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
+            else if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
                 //TODO something idk
+                print("button released");
+                m_locked = false;
+                m_triangle = null;
+                m_carrying_triangle = false;
             }
         }
 
