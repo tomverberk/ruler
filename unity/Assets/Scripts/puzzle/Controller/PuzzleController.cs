@@ -137,6 +137,16 @@
                     pieces.Add(piece);
                 }
             }
+
+            // Set initial position random
+            System.Random random = new System.Random();
+            foreach (PuzzlePiece piece in pieces) {
+                piece.Polygon.transform.position = new Vector3(
+                    (float) random.NextDouble(),
+                    (float) random.NextDouble(),
+                    0f
+                );
+            }
            
             // disable advance button
             m_advanceButton.Disable();
@@ -176,7 +186,7 @@
                 pieceCarried = null;
 
             }
-            
+
             if ((carryingPiece && Input.GetMouseButton(0)))
             {
                 var mousePos = Camera.main.ScreenPointToRay(Input.mousePosition).origin;

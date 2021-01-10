@@ -14,6 +14,12 @@ namespace Puzzle.UI
             set { this.polygon = value; }
         }
 
+        public bool IsValid {
+            get {
+                return polygon.transform.position.magnitude < 0.01f;
+            }
+        }
+
         public PuzzlePiece()
         {
         }
