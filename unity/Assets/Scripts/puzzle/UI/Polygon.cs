@@ -27,7 +27,7 @@
             {
                 points.Add(point);
                 actualPoints.Add(point.Pos);
-                print("position of the point = " + point.Pos);
+                //print("position of the point = " + point.Pos);
             }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
@@ -119,11 +119,14 @@
 
         void Awake()
         {
+            print("I have awoken");
             centerPoint = new Vector2();
+            m_gameController = FindObjectOfType<PuzzleController>();
         }
 
         void OnMouseDown()
         {
+            print("My mouse is down in the rectangle");
             m_gameController.m_carrying_triangle = true;
             m_gameController.m_triangle = this;
             // ???? this was in example code
@@ -132,9 +135,9 @@
 
         void OnMouseEnter()
         {
+            print("I am entering the rectangle");
             //if (m_gameController.m_triangle == null) return;
 
-            //m_gameController.m_locked = true;
             //m_gameController.m_secondPoint = this;
             //m_gameController.m_line.SetPosition(1, Pos);
         }
