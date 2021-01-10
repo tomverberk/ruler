@@ -16,7 +16,7 @@ namespace Puzzle.UI
 
         public bool IsValid {
             get {
-                return polygon.transform.position.magnitude < 0.01f;
+                return polygon.transform.position.magnitude < 0.1f;
             }
         }
 

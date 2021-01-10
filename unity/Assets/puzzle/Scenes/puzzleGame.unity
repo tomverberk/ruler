@@ -242,7 +242,8 @@ MonoBehaviour:
     type: 3}
   m_advanceButton: {fileID: 276096230}
   m_levels:
-  - {fileID: 11400000, guid: 196744a3d0c1b85419e92dd4fab61b99, type: 2}
+  - {fileID: 11400000, guid: 9a3361e6f6f15f649b8c0b45bdb9df1d, type: 2}
+  - {fileID: 11400000, guid: 80d354f5a7ba59b4fa5f1930a2211db9, type: 2}
   m_victoryScene: puzzleVictory
 --- !u!1 &276096228
 GameObject:
@@ -733,17 +734,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: AdvanceLevel
       objectReference: {fileID: 0}
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 102900000, guid: 589cbeb5fe0a3954d89533ee208e0351,
-        type: 3}
+      objectReference: {fileID: 146562972}
     - target: {fileID: 11418384, guid: 1115d4335193dd643963c561dd1f1b1d, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 1

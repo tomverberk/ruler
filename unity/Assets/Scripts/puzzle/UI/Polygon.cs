@@ -10,10 +10,30 @@
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
         public Polygon2D polygon;
+        public GameObject drawedTriangle;
 
         private Vector2 bottom, top, center;
 
         private PuzzleController m_gameController;
+
+        /// <summary>
+        /// Stores lighthouse position. Updates vision after a change in position.
+        /// </summary>
+        public Vector3 Pos
+        {
+            get
+            {
+                return gameObject.transform.position;
+            }
+            set
+            {
+                var current = transform.position;
+                gameObject.transform.position = value;
+
+                // update vision polygon
+                m_gameController.UpdatePolygon(this, current);
+            }
+        }
 
         // base Constructor
         public Polygon() { }
@@ -27,13 +47,13 @@
                 points.Add(point);
                 actualPoints.Add(point.Pos);
             }
-            CalculateCenterPoint(a_vertices);
+            CalculateTopBottom(a_vertices);
             initializeEdges(a_vertices);
             polygon = new Polygon2D(actualPoints);
             return;
         }
 
-        private void CalculateCenterPoint(List<PolygonPoint> a_vertices)
+        public void CalculateTopBottom(List<PolygonPoint> a_vertices)
         {
             float xlow = 2147483647;
             float xhigh = -2147483648;
@@ -68,7 +88,7 @@
             return;
         }
 
-        private void initializeEdges(List<PolygonPoint> a_vertices)
+        public void initializeEdges(List<PolygonPoint> a_vertices)
         {
             PolygonPoint point1 = new PolygonPoint(new Vector2(0, 0));
             PolygonPoint point2 = new PolygonPoint(new Vector2(0, 0));
@@ -86,7 +106,7 @@
                 {
                     point1 = vertex;
                     PolygonEdge edge = new PolygonEdge(point2, point1);
-                    
+
                     edges.Add(edge);
 
                     point2 = point1;
@@ -95,7 +115,7 @@
                 {
                     i += 1;
                 }
-                
+
             }
             if (i > 1)
             {
@@ -103,6 +123,11 @@
                 edges.Add(edge);
             }
             return;
+        }
+
+        public void SetCenterPoint(Vector3 pos)
+        {
+            // this.centerPoint = pos;
         }
 
         public Vector2? getCenterPoint()

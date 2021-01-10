@@ -35,11 +35,9 @@
         [SerializeField]
         private string m_victoryScene;
 
-        internal bool m_locked;
         internal bool carryingPiece;
         internal PuzzlePiece pieceCarried;
         internal Vector3 carryOffset = Vector3.zero;
-
         private List<Vector2> m_points = new List<Vector2>();
         private List<PuzzlePiece> pieces = new List<PuzzlePiece>();
 
@@ -51,55 +49,20 @@
         void Start()
         {
 
-            
+
             print("Beginning");
-
-            // https://www.geogebra.org/calculator/kc4s9xds
-            // List<Vector2> points = new List<Vector2>();
-            // points.Add(new Vector2(0f, 0f)); // A
-            // points.Add(new Vector2(1f, 0f)); // B
-            // points.Add(new Vector2(2f, 2f)); // C
-            // points.Add(new Vector2(11.08f, 5.47f)); // D
-            // points.Add(new Vector2(13.12f, 6.51f)); // E
-            // points.Add(new Vector2(14.76f, 5.79f)); // F
-            // points.Add(new Vector2(17.28f, 7.19f)); // G
-            // points.Add(new Vector2(16.86f, 8.76f)); // H
-            // points.Add(new Vector2(15.26f, 11.09f)); // I
-            // points.Add(new Vector2(13.74f, 9.15f)); // J
-            // Polygon2D poly = new Polygon2D(points);
-            // List<Polygon2D> monotone = Monotone.MakeMonotone(poly);
-
-            // foreach (Polygon2D p in monotone)
-            // {
-            //     print(String.Format("Monotone Polygon ({0}):", p.Vertices.Count));
-
-            //     List<Polygon2D> triangles = Triangulate.TriangulatePoly(p);
-            //     print(String.Format("Triangles: {0}", triangles.Count));
-            //     foreach (Polygon2D t in triangles)
-            //     {
-            //         print(String.Format("Triangle ({0})", t.Vertices.Count));
-            //         foreach (LineSegment e in t.Segments)
-            //         {
-            //             print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.Point1.x, e.Point1.y, e.Point2.x, e.Point2.y));
-            //         }
-            //     }
-            // }
 
             // get unity objects
             instantObjects = new List<GameObject>();
             m_points = new List<Vector2>();
             
-
             InitLevel();
-            
-
-
-            m_locked = false;
         }
 
 
         public void InitLevel()
         {
+            print("creating level" + m_levelCounter);
             if (m_levelCounter >= m_levels.Count)
             {
                 SceneManager.LoadScene(m_victoryScene);
@@ -109,18 +72,18 @@
             // clear old level
             Clear();
 
-            // initialize settlements
+            // initialize points
             foreach (var point in m_levels[m_levelCounter].Points)
             {
-                var p2 = point * 0.2f;
-                var obj = Instantiate(m_pointPrefab, p2, Quaternion.identity) as GameObject;
+                var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                m_points.Add(p2);
+                m_points.Add(point);
             }
 
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
             Polygon2D testPolygon = new Polygon2D(m_points);
+            drawEdgesOfPolygon(testPolygon.Segments);
 
             //createsmallTriangle(testPolygon);
 
@@ -130,7 +93,6 @@
                 List<Polygon2D> triangles = Triangulate.TriangulatePoly(p);
                 foreach (Polygon2D t in triangles)
                 {
-                    // drawEdgesOfPolygon(t.Segments);
                     PuzzlePiece piece = CreatePiece(t);
                     // piece.Polygon.transform.localScale = new Vector3(0.1f, 0.1f);
                     // instantObjects.Add(piece);
@@ -149,7 +111,6 @@
             }
            
             // disable advance button
-            m_advanceButton.Disable();
             m_advanceButton.Enable();
 
         }
@@ -192,7 +153,16 @@
                 var mousePos = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                 var newPos = mousePos - carryOffset;
                 pieceCarried.Polygon.transform.position = newPos;
+
+                print("Valid: " + pieceCarried.IsValid);
             }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                print("Check the solution");
+                CheckSolution();
+            }
+                
         }
 
         public void drawEdgesOfPolygon(ICollection<LineSegment> edges){
@@ -212,7 +182,7 @@
         {
             foreach (Polygon triangle in triangles)
             {
-                // Set a new centerpoint for each triangle
+                // Set a new Top? for each triangle
                 
             }
         }
@@ -223,7 +193,7 @@
         public void PlaceTriangle(Triangle t)
         {
             //TODO EVERYTHING
-            
+
         }
 
         public void RemoveSegment(Triangle t)
@@ -239,22 +209,42 @@
         {
             if (CheckPlacement())
             {
-                //m_advanceButton.Enable();
-            }
-            else
-            {
-                //m_advanceButton.Disable();
+                m_advanceButton.Enable();
             }
         }
 
         private bool CheckPlacement()
         {
-            // TODO quick check
+            bool solution = true;
 
+            if (pieceCarried != null)
+            {
+                // Position with error margin
+                if (!inCircleRadius(pieceCarried.Polygon.transform.position.x, pieceCarried.Polygon.transform.position.y, transform.position.x, transform.position.y))
+                {
+                    return false;
+                }
+            }
 
-            // TODO slow check
-            // also check reverse
-            return true;
+            // for (int i = 0; i < correctPlaceList.Count; i++)
+            // {
+            //     if (correctPlaceList[i] == false)
+            //     {
+            //         solution = false;
+            //     }
+            // }
+
+            if (solution == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // Checks if point is in circle radius
+        private bool inCircleRadius(float center_x, float center_y, float x, float y)
+        {
+            return ((x - center_x) * (x - center_x)) + ((y - center_y) * (y - center_y)) <= (0.1 * 0.1);
         }
 
         /// <summary>
@@ -273,6 +263,26 @@
                 // since controller will search for existing objects afterwards
                 DestroyImmediate(obj);
             }
+        }
+
+        internal void UpdatePolygon(Polygon polygon, Vector3 current)
+        {
+            //print("top is" + polygon.top.Pos);
+            var differenceX = current.x - polygon.Pos.x;
+            var differenceY = current.y - polygon.Pos.y;
+            List<PolygonPoint> points = polygon.points;
+            List<PolygonPoint> newPoints = new List<PolygonPoint>();
+            foreach (var point in points)
+            {
+                var x = point.Pos.x;
+                var y = point.Pos.y;
+                PolygonPoint newPoint = new PolygonPoint(new Vector2(x - differenceX, y - differenceY));
+                newPoints.Add(newPoint);
+            }
+            polygon.points = newPoints;
+            polygon.CalculateTopBottom(newPoints);
+            polygon.edges = new List<PolygonEdge>();
+            polygon.initializeEdges(newPoints);
         }
 
     }
