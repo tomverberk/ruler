@@ -137,7 +137,10 @@
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
                 foreach (Polygon t in triangles)
                 {
-                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(0, 0, -2.0f), Quaternion.identity);
+                    UnityEngine.Random random;
+                    var randomX = UnityEngine.Random.Range(-4f, 4f);
+                    var randomY = UnityEngine.Random.Range(-4f, 4f);
+                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(randomX, randomY, -2f), Quaternion.identity);
                     obj.transform.parent = this.transform;
                     triangulationGameObjects.Add(obj);
                     triangulation.Add(t);
