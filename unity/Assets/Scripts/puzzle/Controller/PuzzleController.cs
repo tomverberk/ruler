@@ -36,13 +36,12 @@
         private string m_victoryScene;
 
         internal bool m_locked;
-        internal bool m_carrying_triangle;
+        internal bool carryingPiece;
+        internal PuzzlePiece pieceCarried;
+        internal Vector3 carryOffset = Vector3.zero;
 
         private List<Vector2> m_points = new List<Vector2>();
         private List<PuzzlePiece> pieces = new List<PuzzlePiece>();
-
-        //private HashSet<LineSegment> m_segments;
-        //private Polygon2D m_solutionHull;
 
         private List<GameObject> instantObjects;
 
@@ -113,10 +112,11 @@
             // initialize settlements
             foreach (var point in m_levels[m_levelCounter].Points)
             {
-                var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
+                var p2 = point * 0.2f;
+                var obj = Instantiate(m_pointPrefab, p2, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                m_points.Add(point);
+                m_points.Add(p2);
             }
 
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
@@ -131,8 +131,9 @@
                 foreach (Polygon2D t in triangles)
                 {
                     // drawEdgesOfPolygon(t.Segments);
-                    Polygon2DMesh mesh = CreatePolygonMesh(t);
-                    PuzzlePiece piece = new PuzzlePiece(mesh);
+                    PuzzlePiece piece = CreatePiece(t);
+                    // piece.Polygon.transform.localScale = new Vector3(0.1f, 0.1f);
+                    // instantObjects.Add(piece);
                     pieces.Add(piece);
                 }
             }
@@ -143,15 +144,19 @@
 
         }
 
-        public Polygon2DMesh CreatePolygonMesh(Polygon2D trianglePoints)
+        public PuzzlePiece CreatePiece(Polygon2D trianglePoints)
         {
             var drawedTriangle = Instantiate(m_triangleMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
             drawedTriangle.transform.parent = this.transform;
             instantObjects.Add(drawedTriangle);
 
-            var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
-            triangleScript.Polygon = trianglePoints;
-            return triangleScript;
+            var mesh = drawedTriangle.GetComponent<Polygon2DMesh>();
+            mesh.Polygon = trianglePoints;
+
+            PuzzlePiece piece = drawedTriangle.AddComponent<PuzzlePiece>();;
+            piece.Polygon = mesh;
+            
+            return piece;
         }
 
         public void AdvanceLevel()
@@ -165,28 +170,18 @@
 
         void Update()
         {
-            //TODO CREATE MOUSE INTERACTION
-            if (m_locked && !Input.GetMouseButton(0))
+            if (!Input.GetMouseButton(0))
             {
-                // TODO Place puzzelpeace and reset values
-                m_locked = false;
-                // m_triangle = null;
-                m_carrying_triangle = false;
+                carryingPiece = false;
+                pieceCarried = null;
 
             }
-            else if (Input.GetMouseButton(0))
+            
+            if ((carryingPiece && Input.GetMouseButton(0)))
             {
-                // TODO something idk
-
-            }
-
-            // Polygon2DMesh mesh = createsmallTriangle(m_triangle);
-            // m_triangle.transform.position = m_triangle.transform.position + new Vector3(0.1f, 0.1f, 0f);
-
-
-            if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
-            {
-                //TODO something idk
+                var mousePos = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
+                var newPos = mousePos - carryOffset;
+                pieceCarried.Polygon.transform.position = newPos;
             }
         }
 
