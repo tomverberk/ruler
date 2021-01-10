@@ -109,6 +109,7 @@
 
         public void InitLevel()
         {
+            print("creating level" + m_levelCounter);
             if (m_levelCounter >= m_levels.Count)
             {
                 SceneManager.LoadScene(m_victoryScene);
@@ -118,7 +119,7 @@
             // clear old level
             Clear();
 
-            // initialize settlements
+            // initialize points
             foreach (var point in m_levels[m_levelCounter].Points)
             {
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
