@@ -44,7 +44,7 @@
         private List<Boolean> correctPlaceList = new List<Boolean>();
         private List<Polygon> triangulation = new List<Polygon>();
         private List<PolygonPoint> triangulationTopPoints = new List<PolygonPoint>();
-        private List<PolygonEdge> p_edges;
+        private List<PolygonEdge> p_edges = new List<PolygonEdge>();
 
         List<GameObject> triangulationGameObjects = new List<GameObject>();
 
@@ -136,7 +136,7 @@
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
                 foreach (Polygon t in triangles)
                 {
-                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(0, 0, -2.0f), Quaternion.identity);
                     obj.transform.parent = this.transform;
                     triangulationGameObjects.Add(obj);
                     triangulation.Add(t);
@@ -146,11 +146,19 @@
 
                     triangulationTopPoints.Add(t.top);
 
+                    t.drawedTriangle = obj;
+
+                    //t.correctPosition = t.Pos;
+                    
+
 
 
 
                     correctPlaceList.Add(false);
                     drawEdgesOfPolygon(t.edges);
+
+                    //Add it to instanceObject to delete later
+                    instantObjects.Add(obj);
                 }
             }
             
@@ -178,7 +186,7 @@
 
 
             // disable advance button
-            m_advanceButton.Disable();
+            m_advanceButton.Enable();
 
         }
 
@@ -220,6 +228,7 @@
 
                 m_triangle.Pos = worldlocation;
                 print("the new position of m_triangle = " + m_triangle.Pos);
+                print("the correct position =" + m_triangle.correctPosition);
 
                 m_triangle = null;
                 m_carrying_triangle = false;
@@ -371,10 +380,15 @@
         /// </summary>
         private void Clear()
         {
-            //m_points.Clear();
-            //triangulation.Clear();
-            //p_edges.Clear();
-            //m_triangle = null;
+            m_points.Clear();
+            correctPlaceList.Clear();
+            triangulation.Clear();
+            triangulationTopPoints.Clear();
+            p_edges.Clear();
+            m_triangle = null;
+            m_carrying_triangle = false;
+
+            triangulationGameObjects.Clear();
 
             // destroy game objects created in level
             foreach (var obj in instantObjects)

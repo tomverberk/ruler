@@ -12,6 +12,7 @@
         public Vector3 centerPoint;
         public PolygonPoint top;
         public PolygonPoint bottom;
+        public Vector3 correctPosition;
         public List<Vector2> actualPoints = new List<Vector2>();
         public Polygon2D polygon;
         public GameObject drawedTriangle;
@@ -151,6 +152,7 @@
             m_gameController = FindObjectOfType<PuzzleController>();
             //m_gameController.m_triangle = this;
             //m_gameController.m_carrying_triangle = true;
+            correctPosition = Pos;
             print("I have awoken");
         }
 
