@@ -1,4 +1,4 @@
-﻿namespace Util.Monotone
+namespace Util.Monotone
 {
   using System;
   using System.Collections.Generic;
@@ -95,22 +95,27 @@
         return VertexType.REGULAR;
       }
 
+      double angle = Vector2.SignedAngle(d1, d2);
+      if (angle < 0) {
+        angle += 360;
+      }
+
       if (d1.y > 0)
       {
         // Start or split vertex.
-        if (d1.x < 0)
+        if (angle > 180)
         {
-          return VertexType.START;
+          return VertexType.SPLIT;
         }
         else
         {
-          return VertexType.SPLIT;
+          return VertexType.START;
         }
       }
       else
       {
         // End or merge vertex.
-        if (d1.x < 0)
+        if (angle > 180)
         {
           return VertexType.MERGE;
         }
