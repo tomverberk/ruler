@@ -136,11 +136,19 @@
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
                 foreach (Polygon t in triangles)
                 {
-                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(2.0F, 0, 0), Quaternion.identity);
+                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                     obj.transform.parent = this.transform;
                     triangulationGameObjects.Add(obj);
                     triangulation.Add(t);
+
+                    var triangleScript = obj.GetComponent<Polygon2DMesh>();
+                    triangleScript.Polygon = t.polygon;
+
                     triangulationTopPoints.Add(t.top);
+
+
+
+
                     correctPlaceList.Add(false);
                     drawEdgesOfPolygon(t.edges);
                 }
@@ -189,7 +197,6 @@
 
             var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
             triangleScript.Polygon = trianglePoints.polygon;
-            //trianglePoints.drawedTriangle = triangleScript;
         }
 
         public void AdvanceLevel()
@@ -216,14 +223,13 @@
                 // TODO something idk
                 var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
                 m_triangle.SetCenterPoint(pos);
-                print(m_triangle.getCenterPoint());
+                //print(m_triangle.getCenterPoint());
                 print("Button is being pressed and I am carrying a triangle");
                 var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                 worldlocation.z = -2f;
 
                 m_triangle.Pos = worldlocation;
 
-                //Change position of the triangle
 
             }
             else if (Input.GetMouseButton(0))
@@ -232,25 +238,26 @@
                 // Do nothing
             }
 
-
+            // This if else if statement seems wrong because m_carrying_triangle can be false and then this gives an error
             else if ((m_carrying_triangle && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
-                if (m_triangle != null)
-                {
+                 
                     //TODO something idk
                     var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                     worldlocation.z = -2f;
+                    print(worldlocation);
 
                     m_triangle.Pos = worldlocation;
 
                     print("button released");
+                    print(m_triangle.Pos);
                     m_triangle = null;
                     m_carrying_triangle = false;
-                }
             }
 
             if (!Input.GetMouseButton(0))
             {
+                print("Check the solution");
                 CheckSolution();
             }
                 
@@ -382,6 +389,7 @@
 
         internal void UpdatePolygon(Polygon polygon, Vector3 current)
         {
+            //print("top is" + polygon.top.Pos);
             var differenceX = current.x - polygon.Pos.x;
             var differenceY = current.y - polygon.Pos.y;
             List<PolygonPoint> points = polygon.points;

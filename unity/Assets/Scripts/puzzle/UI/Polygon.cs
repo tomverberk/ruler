@@ -149,8 +149,8 @@
         void Awake()
         {
             m_gameController = FindObjectOfType<PuzzleController>();
-            m_gameController.m_triangle = this;
-            m_gameController.m_carrying_triangle = true;
+            //m_gameController.m_triangle = this;
+            //m_gameController.m_carrying_triangle = true;
             print("I have awoken");
         }
 
@@ -165,9 +165,8 @@
 
         void OnMouseUp()
         {
-            print("I am entering the Polygon");
-            m_gameController.m_triangle = null;
-            m_gameController.m_carrying_triangle = false;
+            print("I have unclicked the mouse in this polygon");
+
             //if (m_gameController.m_triangle == null) return;
 
             //m_gameController.m_secondPoint = this;
