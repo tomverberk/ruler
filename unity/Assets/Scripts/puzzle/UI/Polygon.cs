@@ -9,11 +9,12 @@
     {
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
-        public Vector2 centerPoint;
+        public Vector3 centerPoint;
         public PolygonPoint top;
         public PolygonPoint bottom;
         public List<Vector2> actualPoints = new List<Vector2>();
         public Polygon2D polygon;
+        public GameObject drawedTriangle;
 
         private PuzzleController m_gameController;
 
@@ -23,11 +24,14 @@
         // Constructor of the points
         public Polygon(List<PolygonPoint> a_vertices)
         {
+            print(" a polygon is created ");
+
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
                 actualPoints.Add(point.Pos);
                 //print("position of the point = " + point.Pos);
+
             }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
@@ -65,7 +69,8 @@
 
             float x = (xlow + xhigh) / 2;
             float y = (ylow + yhigh) / 2;
-            this.centerPoint = new Vector2(x, y);
+            float z = 10;
+            this.centerPoint = new Vector3(x, y, z);
 
             return;
         }
@@ -88,7 +93,7 @@
                 {
                     point1 = vertex;
                     PolygonEdge edge = new PolygonEdge(point2, point1);
-                    
+
                     edges.Add(edge);
 
                     point2 = point1;
@@ -97,7 +102,7 @@
                 {
                     i += 1;
                 }
-                
+
             }
             if (i > 1)
             {
@@ -105,6 +110,11 @@
                 edges.Add(edge);
             }
             return;
+        }
+
+        public void SetCenterPoint(Vector3 pos)
+        {
+            this.centerPoint = pos;
         }
 
         public Vector2? getCenterPoint()
@@ -119,9 +129,10 @@
 
         void Awake()
         {
-            print("I have awoken");
-            centerPoint = new Vector2();
             m_gameController = FindObjectOfType<PuzzleController>();
+            m_gameController.m_triangle = this;
+            m_gameController.m_carrying_triangle = true;
+            print("I have awoken");
         }
 
         void OnMouseDown()
@@ -133,7 +144,7 @@
             //m_controller.m_line.SetPosition(0, Pos);
         }
 
-        void OnMouseEnter()
+        void OnMouseUp()
         {
             print("I am entering the rectangle");
             //if (m_gameController.m_triangle == null) return;
@@ -145,6 +156,6 @@
 
 
         // Additional methods
-        // . . . 
+        // . . .
     }
 }

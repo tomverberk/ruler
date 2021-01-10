@@ -34,6 +34,9 @@
         [SerializeField]
         private string m_victoryScene;
 
+        private Vector3 screenPoint;
+        private Vector3 offset;
+
 
         //internal HullPoint m_firstPoint;
         //internal HullPoint m_secondPoint;
@@ -58,36 +61,37 @@
         void Start()
         {
 
-            
+
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
-            //List<PolygonPoint> points = new List<PolygonPoint>();
-            //points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
-            //points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
-            //points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
-            //points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
-            //points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
-            //points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
-            //points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
-            //points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
-            //points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
-            //points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+            List<PolygonPoint> points = new List<PolygonPoint>();
+            points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
+            points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
+            points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
+            points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
+            points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
+            points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
+            points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
+            points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
+            points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
+            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+
             //Polygon poly = new Polygon(points);
             //List<Polygon> monotone = Monotone.MakeMonotone(poly);
 
             //foreach (Polygon p in monotone)
             //{
-            //    print(String.Format("Monotone Polygon ({0}):", p.points.Count));
+                //print(String.Format("Monotone Polygon ({0}):", p.points.Count));
 
             //    List<Polygon> triangles = Triangulate.TriangulatePoly(p);
-            //    print(String.Format("Triangles: {0}", triangles.Count));
+                //print(String.Format("Triangles: {0}", triangles.Count));
             //    foreach (Polygon t in triangles)
             //    {
-            //        print(String.Format("Triangle ({0})", t.points.Count));
+                    //print(String.Format("Triangle ({0})", t.points.Count));
             //        foreach (PolygonEdge e in t.edges)
             //        {
-            //            print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
+                        //print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
             //        }
             //    }
             //}
@@ -95,7 +99,7 @@
             // get unity objects
             instantObjects = new List<GameObject>();
             m_points = new List<PolygonPoint>();
-            
+
 
             InitLevel();
 
@@ -126,7 +130,6 @@
             }
 
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
-            Polygon testPolygon = createPolygonFromPoints(m_points);
 
             //createsmallTriangle(testPolygon);
 
@@ -139,7 +142,7 @@
                     drawEdgesOfPolygon(t.edges);
                 }
             }
-           
+
             // create a polygon from the points
             //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
             //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
@@ -152,6 +155,7 @@
 
             Polygon polygon = createPolygonFromPoints(m_points);
 
+            createsmallTriangle(polygon);
 
 
             p_edges = polygon.edges;
@@ -173,15 +177,16 @@
             drawedTriangle.transform.parent = this.transform;
             instantObjects.Add(drawedTriangle);
 
-            drawedTriangle.GetComponent<Polygon>().points = trianglePoints.points;
-            drawedTriangle.GetComponent<Polygon>().edges = trianglePoints.edges;
-            drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
-            drawedTriangle.GetComponent<Polygon>().top = trianglePoints.top;
-            drawedTriangle.GetComponent<Polygon>().bottom = trianglePoints.bottom;
-            drawedTriangle.GetComponent<Polygon>().actualPoints = trianglePoints.actualPoints;
+            //drawedTriangle.GetComponent<Polygon>().actualPoints = trianglePoints.actualPoints;
+
+
+
+            //trianglePoints.drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
+            //print("I don't give an error here");
 
             var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
             triangleScript.Polygon = trianglePoints.polygon;
+            //trianglePoints.drawedTriangle = triangleScript;
         }
 
         public void AdvanceLevel()
@@ -205,6 +210,10 @@
             }
             else if (Input.GetMouseButton(0) && m_carrying_triangle)
             {
+                // TODO something idk
+                var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
+                m_triangle.SetCenterPoint(pos);
+                print(m_triangle.getCenterPoint());
                 print("Button is being pressed and I am carrying a triangle");
                 //Change position of the triangle
 
@@ -257,7 +266,7 @@
             foreach (Polygon triangle in triangles)
             {
                 // Set a new centerpoint for each triangle
-                
+
             }
         }
 
@@ -267,7 +276,7 @@
         public void PlaceTriangle(Triangle t)
         {
             //TODO EVERYTHING
-            
+
         }
 
         public void RemoveSegment(Triangle t)
