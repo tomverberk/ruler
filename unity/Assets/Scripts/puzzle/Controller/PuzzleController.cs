@@ -106,7 +106,7 @@
             }
            
             // disable advance button
-            m_advanceButton.Enable();
+            m_advanceButton.Disable();
 
         }
 
@@ -177,6 +177,7 @@
                 m_advanceButton.Enable();
             } else {
                 print("Solution invalid.");
+                m_advanceButton.Disable();
             }
         }
 
@@ -191,14 +192,8 @@
             return true;
         }
 
-        // Checks if point is in circle radius
-        private bool inCircleRadius(float center_x, float center_y, float x, float y)
-        {
-            return ((x - center_x) * (x - center_x)) + ((y - center_y) * (y - center_y)) <= (0.1 * 0.1);
-        }
-
         /// <summary>
-        /// Clears hull and relevant game objects
+        /// Clears level objects
         /// </summary>
         private void Clear()
         {
@@ -209,7 +204,7 @@
                 // since controller will search for existing objects afterwards
                 DestroyImmediate(obj);
             }
-            
+
             instantObjects.Clear();
             m_points.Clear();
             pieces.Clear();
