@@ -153,6 +153,11 @@
             //m_gameController.m_line.SetPosition(1, Pos);
         }
 
+        void OnMouseEnter()
+        {
+            print("Something is entering me");
+        }
+
 
 
         // Additional methods

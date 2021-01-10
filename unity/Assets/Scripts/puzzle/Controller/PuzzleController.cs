@@ -129,11 +129,9 @@
                 m_points.Add(new PolygonPoint(point));
             }
 
-            //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
+            Polygon polygon = createPolygonFromPoints(m_points);
 
-            //createsmallTriangle(testPolygon);
-
-            List<Polygon> monotone = Monotone.MakeMonotone(testPolygon);
+            List<Polygon> monotone = Monotone.MakeMonotone(polygon);
             foreach (Polygon p in monotone)
             {
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
@@ -142,31 +140,11 @@
                     drawEdgesOfPolygon(t.edges);
                 }
             }
-
-            // create a polygon from the points
-            //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
-            //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
-
-            //Polygon polygon1 = createPolygonFromPoints(setPoints1);
-            //polygon polygon2 = createPolygonFromPoints(setPoints2);
-
-            //createsmallTriangle(polygon1);
-            //createsmallTriangle(polygon2);
-
-            Polygon polygon = createPolygonFromPoints(m_points);
-
+      
             createsmallTriangle(polygon);
-
 
             p_edges = polygon.edges;
 
-            //drawEdgesOfPolygon(p_edges);
-
-            // add here the triangles for the polygon
-            //createsmallTriangles()
-
-
-            // disable advance button
             m_advanceButton.Enable();
 
         }
