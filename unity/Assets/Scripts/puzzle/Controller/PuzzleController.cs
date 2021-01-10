@@ -41,7 +41,6 @@
         //internal HullPoint m_firstPoint;
         //internal HullPoint m_secondPoint;
         internal Polygon m_triangle;
-        internal bool m_locked;
         internal bool m_carrying_triangle;
 
         private List<PolygonPoint> m_points = new List<PolygonPoint>();
@@ -62,7 +61,7 @@
         void Start()
         {
 
-            
+
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
@@ -77,6 +76,7 @@
             points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
             points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
             points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+
             //Polygon poly = new Polygon(points);
             //List<Polygon> monotone = Monotone.MakeMonotone(poly);
 
@@ -99,13 +99,13 @@
             // get unity objects
             instantObjects = new List<GameObject>();
             m_points = new List<PolygonPoint>();
-            
+
 
             InitLevel();
-            
 
 
-            m_locked = false;
+
+            m_carrying_triangle = false;
         }
 
 
@@ -131,7 +131,17 @@
 
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
 
-            
+            //createsmallTriangle(testPolygon);
+
+            List<Polygon> monotone = Monotone.MakeMonotone(testPolygon);
+            foreach (Polygon p in monotone)
+            {
+                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
+                foreach (Polygon t in triangles)
+                {
+                    drawEdgesOfPolygon(t.edges);
+                }
+            }
 
             // create a polygon from the points
             //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
@@ -150,14 +160,13 @@
 
             p_edges = polygon.edges;
 
-            drawEdgesOfPolygon(p_edges);
+            //drawEdgesOfPolygon(p_edges);
 
             // add here the triangles for the polygon
             //createsmallTriangles()
 
 
             // disable advance button
-            m_advanceButton.Disable();
             m_advanceButton.Enable();
 
         }
@@ -170,7 +179,7 @@
 
             //drawedTriangle.GetComponent<Polygon>().actualPoints = trianglePoints.actualPoints;
 
-            
+
 
             //trianglePoints.drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
             //print("I don't give an error here");
@@ -192,44 +201,36 @@
         void Update()
         {
             //TODO CREATE MOUSE INTERACTION
-            if (m_locked && !Input.GetMouseButton(0))
+            if (m_carrying_triangle && !Input.GetMouseButton(0))
             {
-                // TODO Place puzzelpeace and reset values
-                m_locked = false;
-                //m_triangle = null;
-                m_carrying_triangle = false;
-                    
+                // This shouldn't happen
+                print("Button is not being pressed pressed and we are not carrying a triangle, this shouldn't happen");
+
 
             }
-            else if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0) && m_carrying_triangle)
             {
                 // TODO something idk
                 var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
                 m_triangle.SetCenterPoint(pos);
                 print(m_triangle.getCenterPoint());
+                print("Button is being pressed and I am carrying a triangle");
+                //Change position of the triangle
 
-                //m_triangle.drawedTriangle.GetComponent<Polygon>().centerPoint = m_triangle.centerPoint;
-                //forEach(var obj in instantObjects){
-                //    if(obj is Polygon)
-                //    {
-                //        if(obj == m_triangle)
-                //        {
-                //            var centerPoint = m_triangle.getCenterPoint();
-                //        }
-                //    }
-                //}
-
-                //var centerPoint = m_triangle.getCenterPoint();
-                //m_triangle.drawedTriangle = UpdateMesh();
-                //print(centerPoint);
-                print("I arrive here");
-
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                print("Button is being pressed but not carrying triangle");
+                // Do nothing
             }
 
 
-            if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
+            else if ((m_carrying_triangle && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
                 //TODO something idk
+                print("button released");
+                m_triangle = null;
+                m_carrying_triangle = false;
             }
         }
 
@@ -265,7 +266,7 @@
             foreach (Polygon triangle in triangles)
             {
                 // Set a new centerpoint for each triangle
-                
+
             }
         }
 
@@ -275,7 +276,7 @@
         public void PlaceTriangle(Triangle t)
         {
             //TODO EVERYTHING
-            
+
         }
 
         public void RemoveSegment(Triangle t)

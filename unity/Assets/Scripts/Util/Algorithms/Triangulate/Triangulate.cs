@@ -41,67 +41,67 @@
 
         // BEGIN ALGORITHM
         Stack<VertexStructure> s = new Stack<VertexStructure>();
-        s.Push(events.Pop());
+        s.Push(events.Pop()); // Push top
         VertexStructure ujMinusOne = events.Pop();
-        s.Push(ujMinusOne);
+        s.Push(ujMinusOne); // push uj minus one
 
         while (events.Count > 1)
         {
-        VertexStructure uj = events.Pop();
-        if (uj.isLeft != s.Peek().isLeft)
-        {
-            // Different side
-            while (s.Count > 0)
+            VertexStructure uj = events.Pop();
+            if (uj.isLeft != s.Peek().isLeft) // compare uj with ujminusone
             {
-            VertexStructure v = s.Pop();
-            if (s.Count > 0)
+                // Different side
+                while (s.Count > 0)
+                {
+                    VertexStructure v = s.Pop();
+                    if (s.Count > 0)
+                    {
+                        List<PolygonPoint> points = new List<PolygonPoint>();
+                        points.Add(uj.point);
+                        points.Add(s.Peek().point);
+                        points.Add(v.point);
+                        triangles.Add(new Polygon(points));
+                    }
+                }
+                s.Push(ujMinusOne);
+                s.Push(uj);
+            }
+            else
             {
-                List<PolygonPoint> points = new List<PolygonPoint>();
-                points.Add(uj.point);
-                points.Add(ujMinusOne.point);
-                points.Add(v.point);
-                triangles.Add(new Polygon(points));
-            }
-            }
-            s.Push(ujMinusOne);
-            s.Push(uj);
-        }
-        else
-        {
-            // Same side
-            VertexStructure v = s.Pop();
-            while (s.Count > 0 && PointCanSeePoint(uj.point, v.point, s.Peek().point, v.isLeft))
-            {
-            VertexStructure vPrime = s.Pop();
+                // Same side
+                VertexStructure v = s.Pop();
+                while (s.Count > 0 && PointCanSeePoint(uj.point, v.point, s.Peek().point, v.isLeft))
+                {
+                    VertexStructure vPrime = s.Pop();
 
-            List<PolygonPoint> points = new List<PolygonPoint>();
-            points.Add(uj.point);
-            points.Add(vPrime.point);
-            points.Add(v.point);
-            triangles.Add(new Polygon(points));
+                    List<PolygonPoint> points = new List<PolygonPoint>();
+                    points.Add(uj.point);
+                    points.Add(vPrime.point);
+                    points.Add(v.point);
+                    triangles.Add(new Polygon(points));
 
-            v = vPrime;
+                    v = vPrime;
+                }
+                s.Push(v);
+                s.Push(uj);
             }
-            s.Push(v);
-            s.Push(uj);
-        }
 
-        ujMinusOne = uj;
+            ujMinusOne = uj;
         }
 
         VertexStructure un = events.Pop();
         VertexStructure v1 = s.Pop();
         while (s.Count > 0)
         {
-        VertexStructure v2 = s.Pop();
+            VertexStructure v2 = s.Pop();
 
-        List<PolygonPoint> points = new List<PolygonPoint>();
-        points.Add(un.point);
-        points.Add(v1.point);
-        points.Add(v2.point);
-        triangles.Add(new Polygon(points));
+            List<PolygonPoint> points = new List<PolygonPoint>();
+            points.Add(un.point);
+            points.Add(v1.point);
+            points.Add(v2.point);
+            triangles.Add(new Polygon(points));
 
-        v1 = v2;
+            v1 = v2;
         }
         // END ALGORITHM
 
@@ -110,12 +110,12 @@
     }
 
     // A is highest point, B lowest point, query point should lie on the inside of the line.
-    private static bool PointCanSeePoint(PolygonPoint linePointA, PolygonPoint queryPoint, PolygonPoint linePointB, Boolean side)
+    private static bool PointCanSeePoint(PolygonPoint linePointA, PolygonPoint queryPoint, PolygonPoint linePointB, Boolean isleft)
     {
         float position;
         position = Math.Sign((linePointB.Pos.x - linePointA.Pos.x) * (queryPoint.Pos.y - linePointA.Pos.y) - (linePointB.Pos.y - linePointA.Pos.y) * (queryPoint.Pos.x - linePointA.Pos.x));
         // Right
-        if (side)
+        if (!isleft)
         {
         if (position == -1)
         {
@@ -127,7 +127,7 @@
         }
         }
         // Left
-        else if (!side)
+        else if (isleft)
         {
         if (position == 1)
         {
