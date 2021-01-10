@@ -209,36 +209,22 @@
         {
             if (CheckPlacement())
             {
+                print("Solution valid.");
                 m_advanceButton.Enable();
+            } else {
+                print("Solution invalid.");
             }
         }
 
         private bool CheckPlacement()
         {
-            bool solution = true;
-
-            if (pieceCarried != null)
-            {
-                // Position with error margin
-                if (!inCircleRadius(pieceCarried.Polygon.transform.position.x, pieceCarried.Polygon.transform.position.y, transform.position.x, transform.position.y))
-                {
+            foreach (PuzzlePiece piece in pieces) {
+                if (!piece.IsValid) {
                     return false;
                 }
             }
 
-            // for (int i = 0; i < correctPlaceList.Count; i++)
-            // {
-            //     if (correctPlaceList[i] == false)
-            //     {
-            //         solution = false;
-            //     }
-            // }
-
-            if (solution == true)
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
 
         // Checks if point is in circle radius
