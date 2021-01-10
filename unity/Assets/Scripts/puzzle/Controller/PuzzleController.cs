@@ -37,15 +37,16 @@
         private Vector3 screenPoint;
         private Vector3 offset;
 
-
-        //internal HullPoint m_firstPoint;
-        //internal HullPoint m_secondPoint;
         internal Polygon m_triangle;
         internal bool m_carrying_triangle;
 
         private List<PolygonPoint> m_points = new List<PolygonPoint>();
-        private List<Polygon> triangulation;
+        private List<Boolean> correctPlaceList = new List<Boolean>();
+        private List<Polygon> triangulation = new List<Polygon>();
+        private List<PolygonPoint> triangulationTopPoints = new List<PolygonPoint>();
         private List<PolygonEdge> p_edges;
+
+        List<GameObject> triangulationGameObjects = new List<GameObject>();
 
         public Polygon2DWithHoles testPolygon { get; private set; }
 
@@ -65,7 +66,7 @@
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
-            List<PolygonPoint> points = new List<PolygonPoint>();
+           /* List<PolygonPoint> points = new List<PolygonPoint>();
             points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
             points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
             points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
@@ -75,7 +76,7 @@
             points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
             points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
             points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
-            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
+            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J*/
 
             //Polygon poly = new Polygon(points);
             //List<Polygon> monotone = Monotone.MakeMonotone(poly);
@@ -99,11 +100,8 @@
             // get unity objects
             instantObjects = new List<GameObject>();
             m_points = new List<PolygonPoint>();
-
-
+            
             InitLevel();
-
-
 
             m_carrying_triangle = false;
         }
@@ -128,24 +126,51 @@
                 instantObjects.Add(obj);
                 m_points.Add(new PolygonPoint(point));
             }
-
-            Polygon polygon = createPolygonFromPoints(m_points);
-
-            List<Polygon> monotone = Monotone.MakeMonotone(polygon);
+            ;
+            Polygon mainPolygon = createPolygonFromPoints(m_points);
+          
+            List<Polygon> monotone = Monotone.MakeMonotone(mainPolygon);
+            print("haaa  ");
             foreach (Polygon p in monotone)
             {
                 List<Polygon> triangles = Triangulate.TriangulatePoly(p);
                 foreach (Polygon t in triangles)
                 {
+                    var obj = Instantiate(m_triangleMeshPrefab, new Vector3(2.0F, 0, 0), Quaternion.identity);
+                    obj.transform.parent = this.transform;
+                    triangulationGameObjects.Add(obj);
+                    triangulation.Add(t);
+                    triangulationTopPoints.Add(t.top);
+                    correctPlaceList.Add(false);
                     drawEdgesOfPolygon(t.edges);
                 }
             }
-      
-            createsmallTriangle(polygon);
+            
+           
+            // create a polygon from the points
+            //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
+            //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
+
+            //Polygon polygon1 = createPolygonFromPoints(setPoints1);
+            //polygon polygon2 = createPolygonFromPoints(setPoints2);
+
+            //createsmallTriangle(polygon1);
+            //createsmallTriangle(polygon2);
+
+            Polygon polygon = createPolygonFromPoints(m_points);
+
+
 
             p_edges = polygon.edges;
 
-            m_advanceButton.Enable();
+            drawEdgesOfPolygon(p_edges);
+
+            // add here the triangles for the polygon
+            //createsmallTriangles()
+
+
+            // disable advance button
+            m_advanceButton.Disable();
 
         }
 
@@ -193,6 +218,11 @@
                 m_triangle.SetCenterPoint(pos);
                 print(m_triangle.getCenterPoint());
                 print("Button is being pressed and I am carrying a triangle");
+                var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
+                worldlocation.z = -2f;
+
+                m_triangle.Pos = worldlocation;
+
                 //Change position of the triangle
 
             }
@@ -205,11 +235,25 @@
 
             else if ((m_carrying_triangle && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
-                //TODO something idk
-                print("button released");
-                m_triangle = null;
-                m_carrying_triangle = false;
+                if (m_triangle != null)
+                {
+                    //TODO something idk
+                    var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
+                    worldlocation.z = -2f;
+
+                    m_triangle.Pos = worldlocation;
+
+                    print("button released");
+                    m_triangle = null;
+                    m_carrying_triangle = false;
+                }
             }
+
+            if (!Input.GetMouseButton(0))
+            {
+                CheckSolution();
+            }
+                
         }
 
         public void drawEdgesOfPolygon(List<PolygonEdge> edges){
@@ -243,8 +287,8 @@
         {
             foreach (Polygon triangle in triangles)
             {
-                // Set a new centerpoint for each triangle
-
+                // Set a new Top? for each triangle
+                
             }
         }
 
@@ -270,22 +314,51 @@
         {
             if (CheckPlacement())
             {
-                //m_advanceButton.Enable();
-            }
-            else
-            {
-                //m_advanceButton.Disable();
+                m_advanceButton.Enable();
             }
         }
 
         private bool CheckPlacement()
         {
+            Boolean solution = true;
             // TODO quick check
 
-
-            // TODO slow check
+            // Slow check
             // also check reverse
-            return true;
+            //Check placement of triangle
+
+            if (m_triangle != null)
+            {
+                /*int index = triangulationGameObjects.IndexOf();*/
+                int index = 0;
+
+                // Position with error margin
+                // Have to check error margin
+                if (inCircleRadius(triangulation[index].top.Pos.x, triangulation[index].top.Pos.y, transform.position.x, transform.position.y))
+                {
+                    correctPlaceList[index] = true;
+                }
+            }
+
+            for (int i = 0; i < correctPlaceList.Count; i++)
+            {
+                if (correctPlaceList[i] == false)
+                {
+                    solution = false;
+                }
+            }
+
+            if (solution == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // Checks if point is in circle radius
+        private bool inCircleRadius(float center_x, float center_y, float x, float y)
+        {
+            return ((x - center_x) * (x - center_x)) + ((y - center_y) * (y - center_y)) <= (0.1 * 0.1);
         }
 
         /// <summary>
@@ -305,6 +378,25 @@
                 // since controller will search for existing objects afterwards
                 DestroyImmediate(obj);
             }
+        }
+
+        internal void UpdatePolygon(Polygon polygon, Vector3 current)
+        {
+            var differenceX = current.x - polygon.Pos.x;
+            var differenceY = current.y - polygon.Pos.y;
+            List<PolygonPoint> points = polygon.points;
+            List<PolygonPoint> newPoints = new List<PolygonPoint>();
+            foreach (var point in points)
+            {
+                var x = point.Pos.x;
+                var y = point.Pos.y;
+                PolygonPoint newPoint = new PolygonPoint(new Vector2(x - differenceX, y - differenceY));
+                newPoints.Add(newPoint);
+            }
+            polygon.points = newPoints;
+            polygon.CalculateTopBottom(newPoints);
+            polygon.edges = new List<PolygonEdge>();
+            polygon.initializeEdges(newPoints);
         }
 
     }

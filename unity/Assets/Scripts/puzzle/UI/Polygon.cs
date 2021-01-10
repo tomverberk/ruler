@@ -18,6 +18,25 @@
 
         private PuzzleController m_gameController;
 
+        /// <summary>
+        /// Stores lighthouse position. Updates vision after a change in position.
+        /// </summary>
+        public Vector3 Pos
+        {
+            get
+            {
+                return gameObject.transform.position;
+            }
+            set
+            {
+                var current = transform.position;
+                gameObject.transform.position = value;
+
+                // update vision polygon
+                m_gameController.UpdatePolygon(this, current);
+            }
+        }
+
         // base Constructor
         public Polygon() { }
 
@@ -33,13 +52,13 @@
                 //print("position of the point = " + point.Pos);
 
             }
-            CalculateCenterPoint(a_vertices);
+            CalculateTopBottom(a_vertices);
             initializeEdges(a_vertices);
             polygon = new Polygon2D(actualPoints);
             return;
         }
 
-        private void CalculateCenterPoint(List<PolygonPoint> a_vertices)
+        public void CalculateTopBottom(List<PolygonPoint> a_vertices)
         {
             float xlow = 2147483647;
             float xhigh = -2147483648;
@@ -75,7 +94,7 @@
             return;
         }
 
-        private void initializeEdges(List<PolygonPoint> a_vertices)
+        public void initializeEdges(List<PolygonPoint> a_vertices)
         {
             PolygonPoint point1 = new PolygonPoint(new Vector2(0, 0));
             PolygonPoint point2 = new PolygonPoint(new Vector2(0, 0));
@@ -137,7 +156,7 @@
 
         void OnMouseDown()
         {
-            print("My mouse is down in the rectangle");
+            print("My mouse is down in the Polygon");
             m_gameController.m_carrying_triangle = true;
             m_gameController.m_triangle = this;
             // ???? this was in example code
@@ -146,7 +165,9 @@
 
         void OnMouseUp()
         {
-            print("I am entering the rectangle");
+            print("I am entering the Polygon");
+            m_gameController.m_triangle = null;
+            m_gameController.m_carrying_triangle = false;
             //if (m_gameController.m_triangle == null) return;
 
             //m_gameController.m_secondPoint = this;

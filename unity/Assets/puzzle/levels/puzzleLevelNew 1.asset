@@ -14,14 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:Puzzle:PolygonLevel
   triangulation: []
   Points:
-  - {x: 12.12, y: 10.47}
-  - {x: 9, y: 9.71}
-  - {x: 8.86, y: 7.07}
-  - {x: 11.08, y: 5.47}
-  - {x: 13.12, y: 6.51}
-  - {x: 14.76, y: 5.79}
-  - {x: 17.28, y: 7.19}
-  - {x: 16.86, y: 8.76}
-  - {x: 15.26, y: 11.09}
-  - {x: 13.74, y: 9.7}
+  - {x: 2, y: 2}
+  - {x: -2, y: 3}
+  - {x: 0, y: 0}
   mainPolygon: {fileID: 0}
