@@ -48,8 +48,6 @@
 
         void Start()
         {
-
-
             print("Beginning");
 
             // get unity objects
@@ -81,7 +79,6 @@
                 m_points.Add(point);
             }
 
-            //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
             Polygon2D testPolygon = new Polygon2D(m_points);
             drawEdgesOfPolygon(testPolygon.Segments);
 
@@ -94,8 +91,6 @@
                 foreach (Polygon2D t in triangles)
                 {
                     PuzzlePiece piece = CreatePiece(t);
-                    // piece.Polygon.transform.localScale = new Vector3(0.1f, 0.1f);
-                    // instantObjects.Add(piece);
                     pieces.Add(piece);
                 }
             }
@@ -137,8 +132,6 @@
             InitLevel();
         }
 
-
-
         void Update()
         {
             if (!Input.GetMouseButton(0))
@@ -153,8 +146,6 @@
                 var mousePos = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                 var newPos = mousePos - carryOffset;
                 pieceCarried.Polygon.transform.position = newPos;
-
-                print("Valid: " + pieceCarried.IsValid);
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -162,7 +153,6 @@
                 print("Check the solution");
                 CheckSolution();
             }
-                
         }
 
         public void drawEdgesOfPolygon(ICollection<LineSegment> edges){
@@ -178,32 +168,6 @@
             }
         }
 
-        public void drawTriangles(List<Polygon> triangles)
-        {
-            foreach (Polygon triangle in triangles)
-            {
-                // Set a new Top? for each triangle
-                
-            }
-        }
-
-        /*
-         * Method when placing a triangle
-         */
-        public void PlaceTriangle(Triangle t)
-        {
-            //TODO EVERYTHING
-
-        }
-
-        public void RemoveSegment(Triangle t)
-        {
-            //TODO REWRITE
-            //m_segments.Remove(a_segment.Segment);
-            CheckSolution();
-        }
-
-        //TODO
         // link advanceButton idk how
         public void CheckSolution()
         {
@@ -238,10 +202,6 @@
         /// </summary>
         private void Clear()
         {
-            instantObjects.Clear();
-            m_points.Clear();
-            pieces.Clear();
-
             // destroy game objects created in level
             foreach (var obj in instantObjects)
             {
@@ -249,27 +209,10 @@
                 // since controller will search for existing objects afterwards
                 DestroyImmediate(obj);
             }
+            
+            instantObjects.Clear();
+            m_points.Clear();
+            pieces.Clear();
         }
-
-        internal void UpdatePolygon(Polygon polygon, Vector3 current)
-        {
-            //print("top is" + polygon.top.Pos);
-            var differenceX = current.x - polygon.Pos.x;
-            var differenceY = current.y - polygon.Pos.y;
-            List<PolygonPoint> points = polygon.points;
-            List<PolygonPoint> newPoints = new List<PolygonPoint>();
-            foreach (var point in points)
-            {
-                var x = point.Pos.x;
-                var y = point.Pos.y;
-                PolygonPoint newPoint = new PolygonPoint(new Vector2(x - differenceX, y - differenceY));
-                newPoints.Add(newPoint);
-            }
-            polygon.points = newPoints;
-            polygon.CalculateTopBottom(newPoints);
-            polygon.edges = new List<PolygonEdge>();
-            polygon.initializeEdges(newPoints);
-        }
-
     }
 }
