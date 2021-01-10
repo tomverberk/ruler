@@ -1,12 +1,13 @@
 ﻿namespace Util.Monotone
 {
   using Puzzle;
+  using UnityEngine;
 
   class VertexStructure
   {
-    public PolygonPoint vertex
+    public Vector2 vertex
     {
-      get { return next.edge.point1; }
+      get { return next.point1; }
     }
 
     public EdgeStructure previous;

@@ -2,7 +2,7 @@
 {
   using System;
   using System.Collections.Generic;
-  using Puzzle;
+  using UnityEngine;
 
   /// <summary>
   /// Data structure for storing thet intersecting components of the MakeMonotone
@@ -11,8 +11,9 @@
   /// </summary>
   class EdgeStructure : IComparable<EdgeStructure>, IEquatable<EdgeStructure>
   {
-    public PolygonEdge edge;
+    public Vector2 point1;
 
+    public Vector2 point2;
     public VertexStructure helper;
 
     public VertexStructure vertex1;
@@ -21,12 +22,12 @@
 
     public int CompareTo(EdgeStructure other)
     {
-      return Comparer<float>.Default.Compare(edge.point1.Pos.x, other.edge.point1.Pos.x);
+      return Comparer<float>.Default.Compare(point1.x, other.point1.x);
     }
 
     public bool Equals(EdgeStructure other)
     {
-      return edge.Equals(other.edge) && helper.Equals(other.helper);
+      return point1.Equals(other.point1) && point2.Equals(other.point2) && helper.Equals(other.helper);
     }
   }
 }

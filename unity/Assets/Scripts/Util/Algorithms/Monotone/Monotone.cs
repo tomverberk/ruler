@@ -2,10 +2,12 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using UnityEngine;
   using Util.DataStructures.BST;
   using Util.DataStructures.Queue;
-  using Puzzle;
+  using Util.Geometry;
+  using Util.Geometry.Polygon;
 
   public static class Monotone
   {
@@ -14,37 +16,31 @@
     /// with point1 before point2 in the CCW order, compute y-monotone polygons
     /// covering the input polygon.
     /// </summary>
-    public static List<Polygon> MakeMonotone(Polygon input)
+    public static List<Polygon2D> MakeMonotone(Polygon2D input)
     {
-      if (input.points.Count < 3)
+      if (input.Vertices.Count < 3)
       {
         throw new ArgumentException("Needs at least three points in input polynomail.");
       }
-      List<Polygon> result = new List<Polygon>();
+      List<Polygon2D> result = new List<Polygon2D>();
 
       // Initialze the event queue with all points.
       IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
 
+      ICollection<LineSegment> segments = input.Segments;
+      LineSegment lastEdge = segments.Last();
       // C# List has O(1) index access, no problem for running time.
       EdgeStructure first = new EdgeStructure
       {
-        edge = input.edges[input.edges.Count - 1],
+        point1 = lastEdge.Point1,
+        point2 = lastEdge.Point2,
       };
       EdgeStructure prev = first;
 
-      foreach (PolygonEdge nextEdge in input.edges)
+      foreach (LineSegment nextEdge in input.Segments)
       {
-        if (prev.edge.point2.Pos != nextEdge.point1.Pos)
-        {
-          throw new ArgumentException("Edges are not in correct CCW order");
-        }
-        else if (prev.edge.point1.Pos == nextEdge.point2.Pos)
-        {
-          throw new ArgumentException("Loop detected.");
-        }
-
         EdgeStructure next;
-        if (nextEdge.point1.Pos == first.edge.point1.Pos && nextEdge.point2.Pos == first.edge.point2.Pos)
+        if (nextEdge.Point1 == first.point1 && nextEdge.Point2 == first.point2)
         {
           next = first;
         }
@@ -52,11 +48,12 @@
         {
           next = new EdgeStructure
           {
-            edge = nextEdge,
+            point1 = nextEdge.Point1,
+            point2 = nextEdge.Point2,
           };
         }
 
-        VertexType type = DetermineType(prev.edge.point1, next.edge.point1, next.edge.point2);
+        VertexType type = DetermineType(prev.point1, next.point1, next.point2);
         VertexStructure v = new VertexStructure
         {
           previous = prev,
@@ -87,10 +84,10 @@
       return result;
     }
 
-    private static VertexType DetermineType(PolygonPoint prev, PolygonPoint curr, PolygonPoint next)
+    private static VertexType DetermineType(Vector2 prev, Vector2 curr, Vector2 next)
     {
-      Vector2 d1 = curr.Pos - prev.Pos;
-      Vector2 d2 = next.Pos - curr.Pos;
+      Vector2 d1 = curr - prev;
+      Vector2 d2 = next - curr;
 
       if (d1.y * d2.y >= 0)
       {
@@ -142,9 +139,9 @@
       return c;
     }
 
-    private static Polygon InsertDiagonal(VertexStructure first, VertexStructure last)
+    private static Polygon2D InsertDiagonal(VertexStructure first, VertexStructure last)
     {
-      List<PolygonPoint> vertices = new List<PolygonPoint>();
+      List<Vector2> vertices = new List<Vector2>();
 
       VertexStructure current = first;
       while (current != last)
@@ -157,23 +154,24 @@
       // Update polynomial for next traversals.
       first.next = new EdgeStructure
       {
-        edge = new PolygonEdge(first.vertex, last.vertex),
+        point1 = first.vertex,
+        point2 = last.vertex,
         vertex1 = first,
         vertex2 = last,
       };
       last.previous = first.next;
 
-      return new Polygon(vertices);
+      return new Polygon2D(vertices);
     }
 
-    private static void HandleVertex(IBST<EdgeStructure> status, List<Polygon> result, VertexStructure v)
+    private static void HandleVertex(IBST<EdgeStructure> status, List<Polygon2D> result, VertexStructure v)
     {
       EdgeStructure e;
       switch (v.type)
       {
         case VertexType.REGULAR:
           // Check if Polygon lies locally right based on CCW property:
-          if (v.previous.edge.point1.Pos.y > v.next.edge.point2.Pos.y)
+          if (v.previous.point1.y > v.next.point2.y)
           {
             EdgeStructure upper = v.previous;
             EdgeStructure lower = v.next;

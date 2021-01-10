@@ -9,11 +9,9 @@
     {
         public List<PolygonPoint> points = new List<PolygonPoint>();
         public List<PolygonEdge> edges = new List<PolygonEdge>();
-        public Vector2 centerPoint;
-        public PolygonPoint top;
-        public PolygonPoint bottom;
-        public List<Vector2> actualPoints = new List<Vector2>();
         public Polygon2D polygon;
+
+        private Vector2 bottom, top, center;
 
         private PuzzleController m_gameController;
 
@@ -23,11 +21,11 @@
         // Constructor of the points
         public Polygon(List<PolygonPoint> a_vertices)
         {
+            List<Vector2> actualPoints = new List<Vector2>();
             foreach (PolygonPoint point in a_vertices)
             {
                 points.Add(point);
                 actualPoints.Add(point.Pos);
-                print("position of the point = " + point.Pos);
             }
             CalculateCenterPoint(a_vertices);
             initializeEdges(a_vertices);
@@ -54,18 +52,18 @@
                 if (point.Pos.y < ylow)
                 {
                     ylow = point.Pos.y;
-                    this.bottom = point;
+                    this.bottom = point.Pos;
                 }
                 if (point.Pos.y > yhigh)
                 {
                     yhigh = point.Pos.y;
-                    this.top = point;
+                    this.top = point.Pos;
                 }
             }
 
             float x = (xlow + xhigh) / 2;
             float y = (ylow + yhigh) / 2;
-            this.centerPoint = new Vector2(x, y);
+            this.center = new Vector2(x, y);
 
             return;
         }
@@ -109,7 +107,7 @@
 
         public Vector2? getCenterPoint()
         {
-            return this.centerPoint;
+            return this.center;
         }
 
         public List<PolygonEdge> getEdges()
@@ -119,13 +117,12 @@
 
         void Awake()
         {
-            centerPoint = new Vector2();
         }
 
         void OnMouseDown()
         {
             m_gameController.m_carrying_triangle = true;
-            m_gameController.m_triangle = this;
+            // m_gameController.m_triangle = this;
             // ???? this was in example code
             //m_controller.m_line.SetPosition(0, Pos);
         }

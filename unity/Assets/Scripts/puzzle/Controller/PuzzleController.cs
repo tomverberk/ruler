@@ -13,6 +13,7 @@
     using Util.Triangulate;
     using General.Controller;
     using UnityEngine.SceneManagement;
+    using Puzzle.UI;
 
 
     public class PuzzleController : MonoBehaviour
@@ -34,19 +35,11 @@
         [SerializeField]
         private string m_victoryScene;
 
-
-        //internal HullPoint m_firstPoint;
-        //internal HullPoint m_secondPoint;
-        internal Polygon m_triangle;
         internal bool m_locked;
         internal bool m_carrying_triangle;
 
-        private List<PolygonPoint> m_points = new List<PolygonPoint>();
-        private List<Polygon> triangulation;
-        private List<PolygonEdge> p_edges;
-
-        public Polygon2DWithHoles testPolygon { get; private set; }
-
+        private List<Vector2> m_points = new List<Vector2>();
+        private List<PuzzlePiece> pieces = new List<PuzzlePiece>();
 
         //private HashSet<LineSegment> m_segments;
         //private Polygon2D m_solutionHull;
@@ -63,39 +56,39 @@
             print("Beginning");
 
             // https://www.geogebra.org/calculator/kc4s9xds
-            List<PolygonPoint> points = new List<PolygonPoint>();
-            points.Add(new PolygonPoint(new Vector2(0f, 0f))); // A
-            points.Add(new PolygonPoint(new Vector2(1f, 0f))); // B
-            points.Add(new PolygonPoint(new Vector2(2f, 2f))); // C
-            points.Add(new PolygonPoint(new Vector2(11.08f, 5.47f))); // D
-            points.Add(new PolygonPoint(new Vector2(13.12f, 6.51f))); // E
-            points.Add(new PolygonPoint(new Vector2(14.76f, 5.79f))); // F
-            points.Add(new PolygonPoint(new Vector2(17.28f, 7.19f))); // G
-            points.Add(new PolygonPoint(new Vector2(16.86f, 8.76f))); // H
-            points.Add(new PolygonPoint(new Vector2(15.26f, 11.09f))); // I
-            points.Add(new PolygonPoint(new Vector2(13.74f, 9.15f))); // J
-            Polygon poly = new Polygon(points);
-            List<Polygon> monotone = Monotone.MakeMonotone(poly);
+            // List<Vector2> points = new List<Vector2>();
+            // points.Add(new Vector2(0f, 0f)); // A
+            // points.Add(new Vector2(1f, 0f)); // B
+            // points.Add(new Vector2(2f, 2f)); // C
+            // points.Add(new Vector2(11.08f, 5.47f)); // D
+            // points.Add(new Vector2(13.12f, 6.51f)); // E
+            // points.Add(new Vector2(14.76f, 5.79f)); // F
+            // points.Add(new Vector2(17.28f, 7.19f)); // G
+            // points.Add(new Vector2(16.86f, 8.76f)); // H
+            // points.Add(new Vector2(15.26f, 11.09f)); // I
+            // points.Add(new Vector2(13.74f, 9.15f)); // J
+            // Polygon2D poly = new Polygon2D(points);
+            // List<Polygon2D> monotone = Monotone.MakeMonotone(poly);
 
-            foreach (Polygon p in monotone)
-            {
-                print(String.Format("Monotone Polygon ({0}):", p.points.Count));
+            // foreach (Polygon2D p in monotone)
+            // {
+            //     print(String.Format("Monotone Polygon ({0}):", p.Vertices.Count));
 
-                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
-                print(String.Format("Triangles: {0}", triangles.Count));
-                foreach (Polygon t in triangles)
-                {
-                    print(String.Format("Triangle ({0})", t.points.Count));
-                    foreach (PolygonEdge e in t.edges)
-                    {
-                        print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.point1.Pos.x, e.point1.Pos.y, e.point2.Pos.x, e.point2.Pos.y));
-                    }
-                }
-            }
+            //     List<Polygon2D> triangles = Triangulate.TriangulatePoly(p);
+            //     print(String.Format("Triangles: {0}", triangles.Count));
+            //     foreach (Polygon2D t in triangles)
+            //     {
+            //         print(String.Format("Triangle ({0})", t.Vertices.Count));
+            //         foreach (LineSegment e in t.Segments)
+            //         {
+            //             print(String.Format("TR ({0}, {1}) to ({2}, {3})", e.Point1.x, e.Point1.y, e.Point2.x, e.Point2.y));
+            //         }
+            //     }
+            // }
 
             // get unity objects
             instantObjects = new List<GameObject>();
-            m_points = new List<PolygonPoint>();
+            m_points = new List<Vector2>();
             
 
             InitLevel();
@@ -123,67 +116,42 @@
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                m_points.Add(new PolygonPoint(point));
+                m_points.Add(point);
             }
 
             //List<PolygonPoint> testTriangle = FindObjectsOfType<PolygonPoint>().ToList();
-            Polygon testPolygon = createPolygonFromPoints(m_points);
+            Polygon2D testPolygon = new Polygon2D(m_points);
 
             //createsmallTriangle(testPolygon);
 
-            List<Polygon> monotone = Monotone.MakeMonotone(testPolygon);
-            foreach (Polygon p in monotone)
+            List<Polygon2D> monotone = Monotone.MakeMonotone(testPolygon);
+            foreach (Polygon2D p in monotone)
             {
-                List<Polygon> triangles = Triangulate.TriangulatePoly(p);
-                foreach (Polygon t in triangles)
+                List<Polygon2D> triangles = Triangulate.TriangulatePoly(p);
+                foreach (Polygon2D t in triangles)
                 {
-                    drawEdgesOfPolygon(t.edges);
+                    // drawEdgesOfPolygon(t.Segments);
+                    Polygon2DMesh mesh = CreatePolygonMesh(t);
+                    PuzzlePiece piece = new PuzzlePiece(mesh);
+                    pieces.Add(piece);
                 }
             }
            
-            // create a polygon from the points
-            //var setPoints1 = new ArraySegment<PolygonPoint>(m_points, 0, 2);
-            //var setPoints2 = new ArraySegment<PolygonPoint>(m_points, 1, 3);
-
-            //Polygon polygon1 = createPolygonFromPoints(setPoints1);
-            //polygon polygon2 = createPolygonFromPoints(setPoints2);
-
-            //createsmallTriangle(polygon1);
-            //createsmallTriangle(polygon2);
-
-            Polygon polygon = createPolygonFromPoints(m_points);
-
-
-
-            p_edges = polygon.edges;
-
-            //drawEdgesOfPolygon(p_edges);
-
-            // add here the triangles for the polygon
-            //createsmallTriangles()
-
-
             // disable advance button
             m_advanceButton.Disable();
             m_advanceButton.Enable();
 
         }
 
-        public void createsmallTriangle(Polygon trianglePoints)
+        public Polygon2DMesh CreatePolygonMesh(Polygon2D trianglePoints)
         {
             var drawedTriangle = Instantiate(m_triangleMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
             drawedTriangle.transform.parent = this.transform;
             instantObjects.Add(drawedTriangle);
 
-            drawedTriangle.GetComponent<Polygon>().points = trianglePoints.points;
-            drawedTriangle.GetComponent<Polygon>().edges = trianglePoints.edges;
-            drawedTriangle.GetComponent<Polygon>().centerPoint = trianglePoints.centerPoint;
-            drawedTriangle.GetComponent<Polygon>().top = trianglePoints.top;
-            drawedTriangle.GetComponent<Polygon>().bottom = trianglePoints.bottom;
-            drawedTriangle.GetComponent<Polygon>().actualPoints = trianglePoints.actualPoints;
-
             var triangleScript = drawedTriangle.GetComponent<Polygon2DMesh>();
-            triangleScript.Polygon = trianglePoints.polygon;
+            triangleScript.Polygon = trianglePoints;
+            return triangleScript;
         }
 
         public void AdvanceLevel()
@@ -202,7 +170,7 @@
             {
                 // TODO Place puzzelpeace and reset values
                 m_locked = false;
-                m_triangle = null;
+                // m_triangle = null;
                 m_carrying_triangle = false;
 
             }
@@ -212,6 +180,9 @@
 
             }
 
+            // Polygon2DMesh mesh = createsmallTriangle(m_triangle);
+            // m_triangle.transform.position = m_triangle.transform.position + new Vector3(0.1f, 0.1f, 0f);
+
 
             if ((m_locked && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
             {
@@ -219,31 +190,17 @@
             }
         }
 
-        public void drawEdgesOfPolygon(List<PolygonEdge> edges){
-            foreach (PolygonEdge edge in edges){
+        public void drawEdgesOfPolygon(ICollection<LineSegment> edges){
+            foreach (LineSegment edge in edges){
 
                 var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward , Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
                 instantObjects.Add(drawedEdge);
 
-                //drawedEdge.GetComponent<HullSegment>().Segment = segment;
-                drawedEdge.GetComponent<PolygonEdge>().Segment = edge.Segment;
-                drawedEdge.GetComponent<PolygonEdge>().point1 = edge.point1;
-                drawedEdge.GetComponent<PolygonEdge>().point2 = edge.point2;
-
                 var roadmeshScript = drawedEdge.GetComponent<ReshapingMesh>();
 
-                Vector2 p1 = edge.point1.Pos;
-                Vector2 p2 = edge.point2.Pos;
-
-                roadmeshScript.CreateNewMesh(p1, p2);
+                roadmeshScript.CreateNewMesh(edge.Point1, edge.Point2);
             }
-        }
-
-        public Polygon createPolygonFromPoints(List<PolygonPoint> points)
-        {
-            Polygon polygon = new Polygon(points);
-            return polygon;
         }
 
         public void drawTriangles(List<Polygon> triangles)
@@ -300,10 +257,9 @@
         /// </summary>
         private void Clear()
         {
-            //m_points.Clear();
-            //triangulation.Clear();
-            //p_edges.Clear();
-            //m_triangle = null;
+            instantObjects.Clear();
+            m_points.Clear();
+            pieces.Clear();
 
             // destroy game objects created in level
             foreach (var obj in instantObjects)
