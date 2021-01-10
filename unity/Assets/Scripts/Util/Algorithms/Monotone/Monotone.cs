@@ -76,10 +76,10 @@ namespace Util.Monotone
       while (events.Count > 0)
       {
         VertexStructure v = events.Pop();
-        HandleVertex(status, result, v);
+        HandleVertex(status, events, result, v);
         last = v;
       }
-      result.Add(InsertDiagonal(last.next.vertex2, last));
+      result.Add(InsertDiagonal(last.next.vertex2, last, events, status));
 
       return result;
     }
@@ -144,15 +144,19 @@ namespace Util.Monotone
       return c;
     }
 
-    private static Polygon2D InsertDiagonal(VertexStructure first, VertexStructure last)
+    private static Polygon2D InsertDiagonal(VertexStructure first, VertexStructure last, IPriorityQueue<VertexStructure> events, IBST<EdgeStructure> status)
     {
       List<Vector2> vertices = new List<Vector2>();
 
       VertexStructure current = first;
       while (current != last)
       {
+        events.Remove(current);
+        status.Delete(current.next);
         vertices.Add(current.vertex);
         current = current.next.vertex2;
+
+        if (vertices.Count > 100) break;
       }
       vertices.Add(last.vertex);
 
@@ -169,7 +173,7 @@ namespace Util.Monotone
       return new Polygon2D(vertices);
     }
 
-    private static void HandleVertex(IBST<EdgeStructure> status, List<Polygon2D> result, VertexStructure v)
+    private static void HandleVertex(IBST<EdgeStructure> status, IPriorityQueue<VertexStructure> events, List<Polygon2D> result, VertexStructure v)
     {
       EdgeStructure e;
       switch (v.type)
@@ -181,9 +185,11 @@ namespace Util.Monotone
             EdgeStructure upper = v.previous;
             EdgeStructure lower = v.next;
 
-            if (upper.helper.type == VertexType.MERGE)
+            Debug.Log(String.Format("Upper: {0} to {1} ({2})", upper.point1, upper.point2, upper.helper));
+            Debug.Log(String.Format("Lower: {0} to {1} ({2})", lower.point1, lower.point2, lower.helper));
+            if (upper.helper != null && upper.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(v, upper.helper));
+              result.Add(InsertDiagonal(v, upper.helper, events, status));
             }
             status.Delete(upper);
 
@@ -195,7 +201,7 @@ namespace Util.Monotone
             e = GetLeft(status, v);
             if (e.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(v, e.helper));
+              result.Add(InsertDiagonal(v, e.helper, events, status));
             }
             e.helper = v;
           }
@@ -211,7 +217,7 @@ namespace Util.Monotone
 
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper));
+            result.Add(InsertDiagonal(v, e.helper, events, status));
           }
 
           status.Delete(e);
@@ -220,7 +226,7 @@ namespace Util.Monotone
         case VertexType.SPLIT:
           e = GetLeft(status, v);
 
-          result.Add(InsertDiagonal(v, e.helper));
+          result.Add(InsertDiagonal(v, e.helper, events, status));
 
           e.helper = v;
           status.Insert(v.next);
@@ -231,14 +237,14 @@ namespace Util.Monotone
           e = GetRight(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper));
+            result.Add(InsertDiagonal(v, e.helper, events, status));
           }
           status.Delete(e);
 
           e = GetLeft(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper));
+            result.Add(InsertDiagonal(v, e.helper, events, status));
           }
           e.helper = v;
 
