@@ -13,7 +13,7 @@ namespace Util.Triangulate
 
     public int Compare(VertexStructure p1, VertexStructure p2)
     {
-      return -Comparer<float>.Default.Compare(p1.point.Pos.y, p2.point.Pos.y);
+      return -Comparer<float>.Default.Compare(p1.point.y, p2.point.y);
     }
   }
 }

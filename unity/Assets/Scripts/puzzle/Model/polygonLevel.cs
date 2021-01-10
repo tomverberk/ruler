@@ -15,13 +15,6 @@ namespace Puzzle
     {
         [Header("Polygon Points")]
 
-        public List<Polygon> triangulation;
         public List<Vector2> Points = new List<Vector2>();
-        public Polygon mainPolygon;
-
-        public PolygonLevel(Polygon mainPolygon)
-        {
-            this.mainPolygon = mainPolygon;
-        }
     }
 }
