@@ -210,8 +210,23 @@
 
         void Update()
         {
+            // This if else if statement seems wrong because m_carrying_triangle can be false and then this gives an error
+            if (Input.GetMouseButtonUp(0) && m_carrying_triangle)
+            {
+                
+                print("The mouse is unclicked");
+                var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
+                worldlocation.z = -2f;
+                print(worldlocation);
+
+                m_triangle.Pos = worldlocation;
+                print("the new position of m_triangle = " + m_triangle.Pos);
+
+                m_triangle = null;
+                m_carrying_triangle = false;
+            }
             //TODO CREATE MOUSE INTERACTION
-            if (m_carrying_triangle && !Input.GetMouseButton(0))
+            else if (m_carrying_triangle && !Input.GetMouseButton(0))
             {
                 // This shouldn't happen
                 print("Button is not being pressed pressed and we are not carrying a triangle, this shouldn't happen");
@@ -223,7 +238,6 @@
                 // TODO something idk
                 var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition + 10 * Vector3.forward);
                 m_triangle.SetCenterPoint(pos);
-                //print(m_triangle.getCenterPoint());
                 print("Button is being pressed and I am carrying a triangle");
                 var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                 worldlocation.z = -2f;
@@ -232,30 +246,15 @@
 
 
             }
-            else if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0) && !m_carrying_triangle)
             {
                 print("Button is being pressed but not carrying triangle");
                 // Do nothing
             }
 
-            // This if else if statement seems wrong because m_carrying_triangle can be false and then this gives an error
-            else if ((m_carrying_triangle && !Input.GetMouseButton(0)) || Input.GetMouseButtonUp(0))
-            {
-                 
-                    //TODO something idk
-                    var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
-                    worldlocation.z = -2f;
-                    print(worldlocation);
+            
 
-                    m_triangle.Pos = worldlocation;
-
-                    print("button released");
-                    print(m_triangle.Pos);
-                    m_triangle = null;
-                    m_carrying_triangle = false;
-            }
-
-            if (!Input.GetMouseButton(0))
+            if (Input.GetMouseButtonUp(0))
             {
                 print("Check the solution");
                 CheckSolution();
