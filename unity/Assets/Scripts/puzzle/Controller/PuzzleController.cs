@@ -217,7 +217,6 @@
                 print("The mouse is unclicked");
                 var worldlocation = Camera.main.ScreenPointToRay(Input.mousePosition).origin;
                 worldlocation.z = -2f;
-                print(worldlocation);
 
                 m_triangle.Pos = worldlocation;
                 print("the new position of m_triangle = " + m_triangle.Pos);
