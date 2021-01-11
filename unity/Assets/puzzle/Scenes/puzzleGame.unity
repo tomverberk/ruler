@@ -240,6 +240,8 @@ MonoBehaviour:
   m_line: {fileID: 1957750538}
   m_edgeMeshPrefab: {fileID: 6416671931283358534, guid: 10929e3a1fa1c3744a9ddf7b6ed885ea,
     type: 3}
+  m_demonstrationEdgePrefab: {fileID: 5036207941063870513, guid: ca3b055e9d6ceaf48942fa833144db15,
+    type: 3}
   m_pointPrefab: {fileID: 2808750082801046721, guid: 26bdf5ae7b0b6094aa3c010b5d3adbdc,
     type: 3}
   m_triangleMeshPrefabList:
