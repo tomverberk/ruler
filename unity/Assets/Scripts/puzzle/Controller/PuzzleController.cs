@@ -53,7 +53,7 @@
             // get unity objects
             instantObjects = new List<GameObject>();
             m_points = new List<Vector2>();
-            
+
             InitLevel();
         }
 
@@ -82,8 +82,6 @@
             Polygon2D testPolygon = new Polygon2D(m_points);
             drawEdgesOfPolygon(testPolygon.Segments);
 
-            //createsmallTriangle(testPolygon);
-
             List<Polygon2D> monotone = Monotone.MakeMonotone(testPolygon);
             foreach (Polygon2D p in monotone)
             {
@@ -97,14 +95,15 @@
 
             // Set initial position random
             System.Random random = new System.Random();
-            foreach (PuzzlePiece piece in pieces) {
+            foreach (PuzzlePiece piece in pieces)
+            {
                 piece.Polygon.transform.position = new Vector3(
-                    (float) random.NextDouble(),
-                    (float) random.NextDouble(),
+                    (float)random.NextDouble(),
+                    (float)random.NextDouble(),
                     0f
                 );
             }
-           
+
             // disable advance button
             m_advanceButton.Disable();
 
@@ -119,9 +118,9 @@
             var mesh = drawedTriangle.GetComponent<Polygon2DMesh>();
             mesh.Polygon = trianglePoints;
 
-            PuzzlePiece piece = drawedTriangle.AddComponent<PuzzlePiece>();;
+            PuzzlePiece piece = drawedTriangle.AddComponent<PuzzlePiece>(); ;
             piece.Polygon = mesh;
-            
+
             return piece;
         }
 
@@ -155,10 +154,12 @@
             }
         }
 
-        public void drawEdgesOfPolygon(ICollection<LineSegment> edges){
-            foreach (LineSegment edge in edges){
+        public void drawEdgesOfPolygon(ICollection<LineSegment> edges)
+        {
+            foreach (LineSegment edge in edges)
+            {
 
-                var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward , Quaternion.identity) as GameObject;
+                var drawedEdge = Instantiate(m_edgeMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
                 drawedEdge.transform.parent = this.transform;
                 instantObjects.Add(drawedEdge);
 
@@ -175,7 +176,9 @@
             {
                 print("Solution valid.");
                 m_advanceButton.Enable();
-            } else {
+            }
+            else
+            {
                 print("Solution invalid.");
                 m_advanceButton.Disable();
             }
@@ -183,8 +186,10 @@
 
         private bool CheckPlacement()
         {
-            foreach (PuzzlePiece piece in pieces) {
-                if (!piece.IsValid) {
+            foreach (PuzzlePiece piece in pieces)
+            {
+                if (!piece.IsValid)
+                {
                     return false;
                 }
             }
