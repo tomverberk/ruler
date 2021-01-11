@@ -94,12 +94,11 @@
             }
 
             // Set initial position random
-            System.Random random = new System.Random();
             foreach (PuzzlePiece piece in pieces)
             {
                 piece.Polygon.transform.position = new Vector3(
-                    (float)random.NextDouble(),
-                    (float)random.NextDouble(),
+                    UnityEngine.Random.Range(-3f, 3f),
+                    UnityEngine.Random.Range(-3f, 3f),
                     0f
                 );
             }
