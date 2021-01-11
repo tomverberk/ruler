@@ -13,7 +13,7 @@ namespace Util.Monotone
     public static class Monotone
     {
         /// <summary>
-        /// Given a simple Polygon with vertices in CCW order, and dcel connecting them in CCW order
+        /// Given a simple Polygon with vertices in CCW order, and edges connecting them in CCW order
         /// with point1 before point2 in the CCW order, compute y-monotone polygons
         /// covering the input polygon.
         /// </summary>
