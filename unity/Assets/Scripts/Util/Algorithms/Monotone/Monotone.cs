@@ -176,8 +176,6 @@ namespace Util.Monotone
                         EdgeStructure upper = v.previous;
                         EdgeStructure lower = v.next;
 
-                        Debug.Log(String.Format("Upper: {0} to {1} ({2})", upper.point1, upper.point2, upper.helper));
-                        Debug.Log(String.Format("Lower: {0} to {1} ({2})", lower.point1, lower.point2, lower.helper));
                         if (upper.helper != null && upper.helper.type == VertexType.MERGE)
                         {
                             InsertDiagonal(v, upper.helper, dcel);
