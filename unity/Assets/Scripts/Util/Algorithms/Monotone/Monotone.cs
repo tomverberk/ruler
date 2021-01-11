@@ -7,6 +7,7 @@ namespace Util.Monotone
   using Util.DataStructures.BST;
   using Util.DataStructures.Queue;
   using Util.Geometry;
+  using Util.Geometry.DCEL;
   using Util.Geometry.Polygon;
 
   public static class Monotone
@@ -23,13 +24,13 @@ namespace Util.Monotone
         throw new ArgumentException("Needs at least three points in input polynomail.");
       }
       List<Polygon2D> result = new List<Polygon2D>();
+      DCEL edges = new DCEL();
 
       // Initialze the event queue with all points.
       IPriorityQueue<VertexStructure> events = new BinaryHeap<VertexStructure>(YComparer.Instance);
 
       ICollection<LineSegment> segments = input.Segments;
       LineSegment lastEdge = segments.Last();
-      // C# List has O(1) index access, no problem for running time.
       EdgeStructure lastStruct = new EdgeStructure
       {
         point1 = lastEdge.Point1,
@@ -39,6 +40,8 @@ namespace Util.Monotone
 
       foreach (LineSegment nextEdge in input.Segments)
       {
+        edges.AddSegment(nextEdge);
+
         EdgeStructure next;
         if (nextEdge == lastEdge)
         {
@@ -76,10 +79,17 @@ namespace Util.Monotone
       while (events.Count > 0)
       {
         VertexStructure v = events.Pop();
-        HandleVertex(status, events, result, v);
+        HandleVertex(status, edges, v);
         last = v;
       }
-      result.Add(InsertDiagonal(last.next.vertex2, last, events, status));
+
+      foreach (Face f in edges.InnerFaces) {
+        Polygon2D p = f.PolygonWithoutHoles;
+        if (p.IsClockwise()) {
+          p.Reverse();
+        }
+        result.Add(p);
+      }
 
       return result;
     }
@@ -144,36 +154,12 @@ namespace Util.Monotone
       return c;
     }
 
-    private static Polygon2D InsertDiagonal(VertexStructure first, VertexStructure last, IPriorityQueue<VertexStructure> events, IBST<EdgeStructure> status)
+    private static void InsertDiagonal(VertexStructure first, VertexStructure last, DCEL edges)
     {
-      List<Vector2> vertices = new List<Vector2>();
-
-      VertexStructure current = first;
-      while (current != last)
-      {
-        events.Remove(current);
-        status.Delete(current.next);
-        vertices.Add(current.vertex);
-        current = current.next.vertex2;
-
-        if (vertices.Count > 100) break;
-      }
-      vertices.Add(last.vertex);
-
-      // Update polynomial for next traversals.
-      first.next = new EdgeStructure
-      {
-        point1 = first.vertex,
-        point2 = last.vertex,
-        vertex1 = first,
-        vertex2 = last,
-      };
-      last.previous = first.next;
-
-      return new Polygon2D(vertices);
+      edges.AddEdge(first.vertex, last.vertex);
     }
 
-    private static void HandleVertex(IBST<EdgeStructure> status, IPriorityQueue<VertexStructure> events, List<Polygon2D> result, VertexStructure v)
+    private static void HandleVertex(IBST<EdgeStructure> status, DCEL edges, VertexStructure v)
     {
       EdgeStructure e;
       switch (v.type)
@@ -189,7 +175,7 @@ namespace Util.Monotone
             Debug.Log(String.Format("Lower: {0} to {1} ({2})", lower.point1, lower.point2, lower.helper));
             if (upper.helper != null && upper.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(v, upper.helper, events, status));
+              InsertDiagonal(v, upper.helper, edges);
             }
             status.Delete(upper);
 
@@ -201,7 +187,7 @@ namespace Util.Monotone
             e = GetLeft(status, v);
             if (e.helper.type == VertexType.MERGE)
             {
-              result.Add(InsertDiagonal(v, e.helper, events, status));
+              InsertDiagonal(v, e.helper, edges);
             }
             e.helper = v;
           }
@@ -217,7 +203,7 @@ namespace Util.Monotone
 
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper, events, status));
+            InsertDiagonal(v, e.helper, edges);
           }
 
           status.Delete(e);
@@ -226,7 +212,7 @@ namespace Util.Monotone
         case VertexType.SPLIT:
           e = GetLeft(status, v);
 
-          result.Add(InsertDiagonal(v, e.helper, events, status));
+          InsertDiagonal(v, e.helper, edges);
 
           e.helper = v;
           status.Insert(v.next);
@@ -237,14 +223,14 @@ namespace Util.Monotone
           e = GetRight(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper, events, status));
+            InsertDiagonal(v, e.helper, edges);
           }
           status.Delete(e);
 
           e = GetLeft(status, v);
           if (e.helper.type == VertexType.MERGE)
           {
-            result.Add(InsertDiagonal(v, e.helper, events, status));
+            InsertDiagonal(v, e.helper, edges);
           }
           e.helper = v;
 
