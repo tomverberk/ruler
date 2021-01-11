@@ -242,6 +242,8 @@ MonoBehaviour:
     type: 3}
   m_demonstrationEdgePrefab: {fileID: 5036207941063870513, guid: ca3b055e9d6ceaf48942fa833144db15,
     type: 3}
+  m_demonstrationMonotomeEdgePrefab: {fileID: 99733320178020688, guid: 7fcf36bf82b5c384da21a291b56c122f,
+    type: 3}
   m_pointPrefab: {fileID: 2808750082801046721, guid: 26bdf5ae7b0b6094aa3c010b5d3adbdc,
     type: 3}
   m_triangleMeshPrefabList:
