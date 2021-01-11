@@ -30,19 +30,19 @@ namespace Util.Monotone
       ICollection<LineSegment> segments = input.Segments;
       LineSegment lastEdge = segments.Last();
       // C# List has O(1) index access, no problem for running time.
-      EdgeStructure first = new EdgeStructure
+      EdgeStructure lastStruct = new EdgeStructure
       {
         point1 = lastEdge.Point1,
         point2 = lastEdge.Point2,
       };
-      EdgeStructure prev = first;
+      EdgeStructure prev = lastStruct;
 
       foreach (LineSegment nextEdge in input.Segments)
       {
         EdgeStructure next;
-        if (nextEdge.Point1 == first.point1 && nextEdge.Point2 == first.point2)
+        if (nextEdge == lastEdge)
         {
-          next = first;
+          next = lastStruct;
         }
         else
         {
