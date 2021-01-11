@@ -26,7 +26,7 @@
         [SerializeField]
         private GameObject m_pointPrefab;
         [SerializeField]
-        private GameObject m_triangleMeshPrefab;
+        private List<GameObject> m_triangleMeshPrefabList;
         [SerializeField]
         private ButtonContainer m_advanceButton;
 
@@ -44,6 +44,7 @@
         private List<GameObject> instantObjects;
 
         protected int m_levelCounter = 0;
+        protected int colorCounter = 0;
 
 
         void Start()
@@ -110,6 +111,8 @@
 
         public PuzzlePiece CreatePiece(Polygon2D trianglePoints)
         {
+            colorCounter = (colorCounter + 1) % 10;
+            var m_triangleMeshPrefab = m_triangleMeshPrefabList[colorCounter];
             var drawedTriangle = Instantiate(m_triangleMeshPrefab, Vector3.forward, Quaternion.identity) as GameObject;
             drawedTriangle.transform.parent = this.transform;
             instantObjects.Add(drawedTriangle);
