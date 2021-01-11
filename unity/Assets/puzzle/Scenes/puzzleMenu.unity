@@ -252,6 +252,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 739006881}
     m_Modifications:
+    - target: {fileID: 114498858246952282, guid: 82d979f91e348514782aabdfc5cfce30,
+        type: 3}
+      propertyPath: m_Text
+      value: PuzzleGame
+      objectReference: {fileID: 0}
     - target: {fileID: 224278802674597414, guid: 82d979f91e348514782aabdfc5cfce30,
         type: 3}
       propertyPath: m_LocalPosition.x

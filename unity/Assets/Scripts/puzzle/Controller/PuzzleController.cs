@@ -137,7 +137,6 @@
             {
                 carryingPiece = false;
                 pieceCarried = null;
-
             }
 
             if ((carryingPiece && Input.GetMouseButton(0)))
