@@ -52,7 +52,7 @@
         private List<GameObject> allEdges;
 
 
-        private List<List<Polygon2D>> allTriangles = new List<List<Polygon2D>>();
+        private List<Polygon2D> allTriangles = new List<Polygon2D>();
 
         protected int m_levelCounter = 0;
         protected int colorCounter = 0;
@@ -102,19 +102,19 @@
             Polygon2D testPolygon = new Polygon2D(m_points);
             drawEdgesOfPolygon(testPolygon.Segments);
 
-            List<Polygon2D> monotone = Monotone.MakeMonotone(testPolygon);
-            List<Polygon2D> triangles = new List<Polygon2D>();
+            monotone = Monotone.MakeMonotone(testPolygon);
+            allTriangles = new List<Polygon2D>();
             foreach (Polygon2D p in monotone)
             {
-                triangles.AddRange(Triangulate.TriangulatePoly(p));
+                allTriangles.AddRange(Triangulate.TriangulatePoly(p));
             }
 
             // TODO: make merge checking more efficient, now O(t^2) worst Kees with 't' number of triangles.
             // Sort on area such that result list contains merge candidates for small triangles
-            triangles.Sort((t1, t2) => -Comparer<float>.Default.Compare(t1.Area, t2.Area));
+            allTriangles.Sort((t1, t2) => -Comparer<float>.Default.Compare(t1.Area, t2.Area));
 
             List<Polygon2D> result = new List<Polygon2D>();
-            foreach (Polygon2D t in triangles)
+            foreach (Polygon2D t in allTriangles)
             {
                 if (t.Area < 0.25f)
                 {
@@ -292,12 +292,9 @@
                 {
                     print("Show all edges");
                     t_wasPressed = true;
-                    foreach (var list in allTriangles)
+                    foreach (var p in allTriangles)
                     {
-                        foreach (var p in list)
-                        {
-                            drawAllAuxileryEdges(p.Segments);
-                        }
+                        drawAllAuxileryEdges(p.Segments);
                     }
                 }
                 else
