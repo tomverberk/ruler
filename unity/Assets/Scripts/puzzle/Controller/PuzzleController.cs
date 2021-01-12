@@ -100,7 +100,7 @@
             List<Polygon2D> result = new List<Polygon2D>();
             foreach (Polygon2D t in triangles)
             {
-                if (t.Area < 0.5f)
+                if (t.Area < 0.25f)
                 {
                     print("REMOVE small triangle");
                     bool merged = false;
