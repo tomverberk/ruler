@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2999113334685550146}
   - component: {fileID: 7521682453076930823}
-  - component: {fileID: 3917395916304912779}
   - component: {fileID: 6368133244544818480}
   m_Layer: 0
   m_Name: point
@@ -81,18 +80,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3917395916304912779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2808750082801046721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3842cb22e9d632e4fbd2bd98086a1de3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &6368133244544818480
 BoxCollider2D:
   m_ObjectHideFlags: 0
