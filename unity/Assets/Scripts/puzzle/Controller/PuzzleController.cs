@@ -77,21 +77,59 @@
                 var obj = Instantiate(m_pointPrefab, point, Quaternion.identity) as GameObject;
                 obj.transform.parent = this.transform;
                 instantObjects.Add(obj);
-                m_points.Add(point);
+                Vector2 p2 = point;
+                p2.x += p2.y * 0.000001f;
+                p2.y += p2.x * 0.000001f;
+                m_points.Add(p2);
             }
 
             Polygon2D testPolygon = new Polygon2D(m_points);
             drawEdgesOfPolygon(testPolygon.Segments);
 
             List<Polygon2D> monotone = Monotone.MakeMonotone(testPolygon);
+            List<Polygon2D> triangles = new List<Polygon2D>();
             foreach (Polygon2D p in monotone)
             {
-                List<Polygon2D> triangles = Triangulate.TriangulatePoly(p);
-                foreach (Polygon2D t in triangles)
+                triangles.AddRange(Triangulate.TriangulatePoly(p));
+            }
+
+            // TODO: make merge checking more efficient, now O(t^2) worst Kees with 't' number of triangles.
+            // Sort on area such that result list contains merge candidates for small triangles
+            triangles.Sort((t1, t2) => -Comparer<float>.Default.Compare(t1.Area, t2.Area));
+
+            List<Polygon2D> result = new List<Polygon2D>();
+            foreach (Polygon2D t in triangles)
+            {
+                if (t.Area < 0.5f)
                 {
-                    PuzzlePiece piece = CreatePiece(t);
-                    pieces.Add(piece);
+                    print("REMOVE small triangle");
+                    bool merged = false;
+                    foreach (Polygon2D c in result)
+                    {
+                        if (CanMergePieces(c, t))
+                        {
+                            print("REMOVED small triangle" + c.VertexCount);
+                            merged = true;
+                            break;
+                        }
+                    }
+                    if (!merged)
+                    {
+                        result.Add(t);
+                    }
                 }
+                else
+                {
+                    result.Add(t);
+                }
+            }
+
+            foreach (Polygon2D t in result)
+            {
+                // drawEdgesOfPolygon(t.Segments);
+                Debug.Log(String.Format("{0} {1} {2}", t.Vertices.ElementAt(0), t.Vertices.ElementAt(1), t.Vertices.ElementAt(2)));
+                PuzzlePiece piece = CreatePiece(t);
+                pieces.Add(piece);
             }
 
             // Set initial position random
@@ -126,6 +164,58 @@
             return piece;
         }
 
+        public bool CanMergePieces(Polygon2D p1, Polygon2D p2)
+        {
+            if (p2.Vertices.Intersect(p1.Vertices).Count() != 2)
+                return false;
+
+            Vector2 v1 = p2.Vertices.ElementAt(0);
+            Vector2 v2 = p2.Vertices.ElementAt(1);
+            Vector2 v3 = p2.Vertices.ElementAt(2);
+
+            if (p1.ContainsVertex(v1))
+            {
+                if (p1.ContainsVertex(v2))
+                {
+                    // v1 and v2 are in the intersection.
+                    InsertMergeVertex(p1, v1, v2, v3);
+                }
+                else
+                {
+                    // v1 and v3 are in the intersection.
+                    InsertMergeVertex(p1, v1, v3, v2);
+                }
+            }
+            else
+            {
+                // v2 and v3 are in the intersection.
+                InsertMergeVertex(p1, v2, v3, v1);
+            }
+
+            return true;
+        }
+
+        private void InsertMergeVertex(Polygon2D p, Vector2 v1, Vector2 v2, Vector2 add)
+        {
+            Vector2 first = p.Vertices.First();
+            Vector2 last = p.Vertices.Last();
+            if ((first == v1 && last == v2) || (first == v2 && last == v1))
+            {
+                p.AddVertexFirst(add);
+            }
+            else
+            {
+                foreach (Vector2 v in p.Vertices)
+                {
+                    if (v == v1 || v == v2)
+                    {
+                        p.AddVertexAfter(add, v);
+                        break;
+                    }
+                }
+            }
+        }
+
         public void AdvanceLevel()
         {
             // increase level index
@@ -135,9 +225,10 @@
 
         void Update()
         {
-            if (!Input.GetMouseButton(0))
+            if (!Input.GetMouseButton(0) && carryingPiece)
             {
                 carryingPiece = false;
+                print(String.Format("Valid: {0}", pieceCarried.IsValid));
                 pieceCarried = null;
             }
 

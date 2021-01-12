@@ -258,6 +258,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9a3361e6f6f15f649b8c0b45bdb9df1d, type: 2}
   - {fileID: 11400000, guid: 80d354f5a7ba59b4fa5f1930a2211db9, type: 2}
   - {fileID: 11400000, guid: 3d80c33632da4150ba23da7ff83863f1, type: 2}
+  - {fileID: 11400000, guid: e4e47552fc17cf55e91cb6af70fadc8a, type: 2}
   m_victoryScene: puzzleVictory
 --- !u!1 &276096228
 GameObject:
