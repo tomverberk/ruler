@@ -10,6 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86ba944798c806c4b8bc7462f9ec70d1, type: 3}
-  m_Name: PolygonLevel
+  m_Name: puzzleLevel1
   m_EditorClassIdentifier: 
-  Points: []
+  Points:
+  - {x: 1, y: 0}
+  - {x: 0, y: 2}
+  - {x: -2, y: 3}
+  - {x: -1, y: 0}
